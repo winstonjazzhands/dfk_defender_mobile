@@ -13286,34 +13286,43 @@ function canSubmitRewardClaims() {
   }
 
   function renderHeroQuickSelect() {
-    const host = document.getElementById('heroQuickSelect');
-    if (!host) return;
+    const hosts = [document.getElementById('heroQuickSelect'), document.getElementById('mobileHeroQuickSelect')].filter(Boolean);
+    if (!hosts.length) return;
     const selectableTowers = game.towers.filter(t => !t.isSatellite && !t.isSoulSplit && !isStatueTower(t));
-    if (!selectableTowers.length) {
-      host.innerHTML = '<div class="hero-quick-empty">No heroes placed.</div>';
-      return;
-    }
-    const counts = new Map();
-    host.innerHTML = '';
-    selectableTowers.forEach((tower) => {
-      const count = (counts.get(tower.type) || 0) + 1;
-      counts.set(tower.type, count);
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'hero-quick-btn';
-      if (game.selectedId === tower.id) btn.classList.add('is-selected');
-      const hasReadyAbility = towerHasReadyMobileAbility(tower);
-      if (hasReadyAbility) btn.classList.add('has-ready-ability');
-      const baseName = tower.name || tower.type;
-      const heroLabel = `${baseName}${count > 1 ? ` ${count}` : ''}`;
-      btn.textContent = heroLabel;
-      btn.title = hasReadyAbility ? `${heroLabel} — ability ready` : `Select ${heroLabel}`;
-      btn.addEventListener('click', () => {
-        game.selectedId = tower.id;
-        game.movingTowerId = null;
-        render();
+    const heroInitial = (tower) => {
+      const raw = String(tower?.type || tower?.name || '?').trim();
+      return (raw.charAt(0) || '?').toUpperCase();
+    };
+    const heroColorClass = (tower) => `hero-quick-type-${String(tower?.type || 'hero').toLowerCase().replace(/[^a-z0-9_-]+/g, '-')}`;
+    hosts.forEach((host) => {
+      const compact = host.id === 'mobileHeroQuickSelect';
+      host.classList.toggle('has-heroes', selectableTowers.length > 0);
+      host.innerHTML = '';
+      if (!selectableTowers.length) {
+        if (!compact) host.innerHTML = '<div class="hero-quick-empty">No heroes placed.</div>';
+        return;
+      }
+      const counts = new Map();
+      selectableTowers.forEach((tower) => {
+        const count = (counts.get(tower.type) || 0) + 1;
+        counts.set(tower.type, count);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `hero-quick-btn ${compact ? 'hero-quick-btn-compact' : ''} ${heroColorClass(tower)}`;
+        if (game.selectedId === tower.id) btn.classList.add('is-selected');
+        const hasReadyAbility = towerHasReadyMobileAbility(tower);
+        if (hasReadyAbility) btn.classList.add('has-ready-ability');
+        const baseName = tower.name || tower.type;
+        const heroLabel = `${baseName}${count > 1 ? ` ${count}` : ''}`;
+        btn.textContent = compact ? heroInitial(tower) : heroLabel;
+        btn.title = hasReadyAbility ? `${heroLabel} — ability ready` : `Select ${heroLabel}`;
+        btn.addEventListener('click', () => {
+          game.selectedId = tower.id;
+          game.movingTowerId = null;
+          render();
+        });
+        host.appendChild(btn);
       });
-      host.appendChild(btn);
     });
   }
 

@@ -14538,3 +14538,169 @@ body::after {
     min-height: 42px !important;
   }
 }
+
+/* v46.9.1.306t: keep intro/top controls visible, center How To Play, and add compact hero quick-select row to bottom dock. */
+@media (max-width: 1024px) and (orientation: portrait) {
+  #mobileTopControls.mobile-top-controls,
+  #mobilePrimaryActions.mobile-primary-actions,
+  #mobileFlyoutStack.mobile-flyout-stack {
+    z-index: 90050 !important;
+  }
+
+  body.story-active #mobileTopControls.mobile-top-controls,
+  body.story-active #mobilePrimaryActions.mobile-primary-actions,
+  body.story-active #mobileFlyoutStack.mobile-flyout-stack,
+  body.intro-open #mobileTopControls.mobile-top-controls,
+  body.intro-open #mobilePrimaryActions.mobile-primary-actions,
+  body.intro-open #mobileFlyoutStack.mobile-flyout-stack {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    filter: none !important;
+  }
+
+  #seerIntroModal.how-to-play-active:not(.hidden) {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100dvw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: calc(var(--mobile-safe-top, 8px) + var(--mobile-top-controls-h, 92px) + 8px) 10px calc(var(--mobile-safe-bottom, 8px) + 10px) 10px !important;
+    margin: 0 !important;
+    transform: none !important;
+    background: rgba(0, 0, 0, 0.72) !important;
+    overflow: hidden !important;
+    z-index: 60000 !important;
+    box-sizing: border-box !important;
+  }
+
+  #seerIntroModal.how-to-play-active:not(.hidden) .seer-intro-modal-card,
+  #seerIntroModal.how-to-play-active:not(.hidden) .intro-modal-card {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin: auto !important;
+    width: min(392px, calc(100dvw - 20px)) !important;
+    max-width: calc(100dvw - 20px) !important;
+    height: min(78dvh, 720px) !important;
+    max-height: calc(100dvh - var(--mobile-top-controls-h, 92px) - var(--mobile-safe-top, 8px) - var(--mobile-safe-bottom, 8px) - 28px) !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) auto !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  #seerIntroModal.how-to-play-active:not(.hidden) .seer-intro-body {
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+  }
+
+  #seerIntroModal.how-to-play-active:not(.hidden) .seer-intro-footer {
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 1 !important;
+  }
+
+  #mobileBottomBar.mobile-bottom-bar,
+  #mobileBottomBar {
+    max-height: calc(var(--mobile-bottom-reserve, 128px) + 34px) !important;
+  }
+
+  #mobileBottomBar .mobile-active-skills-card,
+  .mobile-active-skills-card {
+    min-height: 96px !important;
+    padding-top: 0 !important;
+    gap: 6px !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bars {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    order: 1 !important;
+    margin: 0 0 1px 0 !important;
+    width: 100% !important;
+  }
+
+  #mobileBottomBar .mobile-active-skills-grid,
+  .mobile-active-skills-grid {
+    order: 3 !important;
+  }
+
+  .mobile-hero-quick-select {
+    order: 2 !important;
+    display: none !important;
+    grid-template-columns: repeat(auto-fit, minmax(28px, 1fr)) !important;
+    gap: 5px !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .mobile-hero-quick-select.has-heroes {
+    display: grid !important;
+  }
+
+  .hero-quick-btn-compact {
+    min-width: 0 !important;
+    min-height: 26px !important;
+    height: 26px !important;
+    padding: 1px 2px !important;
+    border-radius: 7px !important;
+    border: 1px solid rgba(103, 132, 202, 0.86) !important;
+    background: linear-gradient(180deg, rgba(18, 34, 69, 0.98), rgba(7, 17, 39, 0.99)) !important;
+    color: #f9fbff !important;
+    font-size: 0.72rem !important;
+    font-weight: 950 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04) !important;
+  }
+
+  .hero-quick-btn-compact.is-selected {
+    border-color: rgba(255, 226, 112, 0.98) !important;
+    box-shadow: 0 0 0 1px rgba(255, 226, 112, 0.52), 0 0 11px rgba(255, 210, 75, 0.28), inset 0 0 0 1px rgba(255,255,255,0.08) !important;
+  }
+
+  .hero-quick-btn-compact.has-ready-ability::after {
+    content: '' !important;
+    position: absolute !important;
+    width: 5px !important;
+    height: 5px !important;
+    right: 4px !important;
+    top: 4px !important;
+    border-radius: 999px !important;
+    background: #5ff58a !important;
+    box-shadow: 0 0 5px rgba(95, 245, 138, 0.75) !important;
+  }
+
+  .hero-quick-btn-compact { position: relative !important; }
+  .hero-quick-type-warrior { background: linear-gradient(180deg, rgba(52, 92, 170, 0.98), rgba(11, 28, 67, 0.99)) !important; }
+  .hero-quick-type-archer { background: linear-gradient(180deg, rgba(39, 118, 70, 0.98), rgba(10, 51, 31, 0.99)) !important; }
+  .hero-quick-type-priest { background: linear-gradient(180deg, rgba(210, 184, 82, 0.98), rgba(84, 62, 15, 0.99)) !important; }
+  .hero-quick-type-wizard { background: linear-gradient(180deg, rgba(121, 65, 188, 0.98), rgba(50, 21, 89, 0.99)) !important; }
+  .hero-quick-type-monk { background: linear-gradient(180deg, rgba(46, 153, 154, 0.98), rgba(13, 70, 75, 0.99)) !important; }
+  .hero-quick-type-berserker { background: linear-gradient(180deg, rgba(178, 61, 49, 0.98), rgba(82, 20, 18, 0.99)) !important; }
+  .hero-quick-type-pirate { background: linear-gradient(180deg, rgba(121, 83, 47, 0.98), rgba(59, 35, 18, 0.99)) !important; }
+  .hero-quick-type-seer { background: linear-gradient(180deg, rgba(100, 185, 220, 0.98), rgba(26, 74, 105, 0.99)) !important; }
+
+  #mobileBottomBar .mobile-ability-btn,
+  #mobileBottomBar .mobile-bottom-btn,
+  #mobileAbilityBtn1,
+  #mobileAbilityBtn2,
+  #mobileAbilityBtn3,
+  #mobileAbilityBtn4 {
+    min-height: 52px !important;
+    height: 52px !important;
+  }
+}
