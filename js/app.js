@@ -539,8 +539,8 @@ function getRandomTree(){
   window.DFK_DEFENDER_FORK_NAME = 'dfk_defender_mobile';
   window.DFK_DEFENDER_FORK_VERSION = 'v46.9.1.305m';
 
-  const WIDTH = 6;
-  const HEIGHT = 14;
+  const WIDTH = 7;
+  const HEIGHT = 12;
   const MOBILE_PORTRAIT_FORK = true;
   let BREACH_LANES = {
     top: [],
@@ -12752,10 +12752,10 @@ function canSubmitRewardClaims() {
     const availableW = Math.max(232, vw - boardLeft - boardRight - boardFitFudgeX);
     const availableH = Math.max(112, vh - topOffset - bottomOffset - Math.max(bottomBarH, 0) - boardFitFudgeY);
     const sizeFromW = Math.floor((availableW - (5 * gap)) / 6);
-    const sizeFromH = Math.floor((availableH - (13 * gap)) / 14);
+    const sizeFromH = Math.floor((availableH - (12 * gap)) / 13);
     const tileSize = Math.max(22, Math.min(72, sizeFromW, sizeFromH));
     const boardWidth = tileSize * 6 + gap * 5;
-    const boardHeight = tileSize * 14 + gap * 13;
+    const boardHeight = tileSize * 13 + gap * 12;
 
     root.style.setProperty('--mobile-safe-left', `${safeLeft}px`);
     root.style.setProperty('--mobile-safe-right', `${safeRight}px`);
@@ -13110,7 +13110,7 @@ function canSubmitRewardClaims() {
     if (maxLevelBtn) {
       const maxButtonArt = towerArt || fallbackMobileArt[3] || '';
       if (!tower) {
-        setMobileAbilityButtonMarkup(maxLevelBtn, 'Max Lvl', '&nbsp;', maxButtonArt);
+        setMobileAbilityButtonMarkup(maxLevelBtn, 'Max Level', '&nbsp;', maxButtonArt);
         setMobileAbilityVisualState(maxLevelBtn, 'disabled');
         maxLevelBtn.title = 'Hire and place a hero to enable max level.';
         maxLevelBtn.disabled = true;
@@ -13125,7 +13125,7 @@ function canSubmitRewardClaims() {
         const meta = canUse
           ? `L${targetLevel} • ${formatJewel(affordableSpend, tower)}g`
           : `L${Math.min(getUpgradeLevelCap(), Number(tower.level || 1))} • 0g`;
-        setMobileAbilityButtonMarkup(maxLevelBtn, 'Max Lvl', meta, maxButtonArt);
+        setMobileAbilityButtonMarkup(maxLevelBtn, 'Max Level', meta, maxButtonArt);
         setMobileAbilityVisualState(maxLevelBtn, canUse ? 'ready' : 'locked');
         maxLevelBtn.title = canUse
           ? `Spend ${formatJewel(affordableSpend, tower)} gold to reach level ${targetLevel}`
@@ -13181,8 +13181,8 @@ function canSubmitRewardClaims() {
       const disabling = els.disableTrackingBtn && !els.disableTrackingBtn.classList.contains('hidden');
       els.mobileTrackingBtn.classList.toggle('active', !!disabling);
       els.mobileTrackingBtn.innerHTML = disabling
-        ? '<span class="mobile-primary-icon" aria-hidden="true">⌁</span><span>Disable<br/>Run Tracking</span>'
-        : '<span class="mobile-primary-icon" aria-hidden="true">⌁</span><span>Enable<br/>Run Tracking</span>';
+        ? '<span class="mobile-primary-icon" aria-hidden="true">⌁</span><span>Tracking<br/>ON</span>'
+        : '<span class="mobile-primary-icon" aria-hidden="true">⌁</span><span>Tracking<br/>OFF</span>';
     }
     if (els.mobileAutoStartBtn) {
       const enabled = !!game.autoStartEnabled;
@@ -13193,8 +13193,8 @@ function canSubmitRewardClaims() {
       const connected = !!getConnectedWalletAddress();
       els.mobileConnectBtn.classList.toggle('active', connected);
       els.mobileConnectBtn.innerHTML = connected
-        ? '<span class="mobile-primary-icon" aria-hidden="true">🔗</span><span>Connected</span>'
-        : '<span class="mobile-primary-icon" aria-hidden="true">🔗</span><span>Connect</span>';
+        ? '<span class="mobile-primary-icon" aria-hidden="true">🔗</span><span>Wallet<br/>Connected</span>'
+        : '<span class="mobile-primary-icon" aria-hidden="true">🔗</span><span>Wallet<br/>Off</span>';
     }
     if (els.mobileNextWaveBtn) {
       const canStart = !!els.startWaveBtn && !els.startWaveBtn.disabled && !els.startWaveBtn.classList.contains('hidden');
@@ -21581,14 +21581,14 @@ function canSubmitRewardClaims() {
     .live-damage-report-method-value { font-size: 10px; font-weight: 700; color: #f5edd7; text-align: right; }
     .live-damage-report-gen0-value { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 8px; color: #ffe883; text-shadow: 0 0 5px rgba(255, 210, 45, 0.26); }
     .live-damage-report-empty { padding: 6px 8px; border-radius: 10px; background: rgba(255,255,255,0.035); color: rgba(220, 227, 239, 0.78); }
-    .wallet-hero-scan-status { width: 65%; max-width: 1120px; margin: 10px auto 0; padding: 9px 12px 7px; display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 6px; border: 1px solid rgba(129, 220, 255, 0.36); border-radius: 12px; background: rgba(12, 18, 30, 0.94); color: #dff7ff; font-size: 19px; font-weight: 800; letter-spacing: 0.01em; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 0 24px rgba(74, 201, 255, 0.16); pointer-events: none; animation: walletHeroScanNoticeBreathe 1.25s ease-in-out infinite alternate; }
+    .wallet-hero-scan-status { width: 65%; max-width: 1120px; margin: 10px auto 0; padding: 8px 12px 6px; display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 6px; border: 1px solid rgba(129, 220, 255, 0.36); border-radius: 12px; background: rgba(12, 18, 30, 0.94); color: #dff7ff; font-size: 15px; font-weight: 800; letter-spacing: 0.01em; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 0 24px rgba(74, 201, 255, 0.16); pointer-events: none; animation: walletHeroScanNoticeBreathe 1.25s ease-in-out infinite alternate; }
     .wallet-hero-scan-status.hidden { display: none; }
     .wallet-hero-scan-status.is-done { border-color: rgba(120, 243, 164, 0.32); color: #dfffe8; animation: none; }
     .wallet-hero-scan-line { display: flex; align-items: center; justify-content: center; gap: 9px; text-align: center; }
     .wallet-hero-scan-spinner { width: 15px; height: 15px; border-radius: 999px; border: 2px solid rgba(223,247,255,0.22); border-top-color: #9ce1ff; animation: walletHeroScanSpin 0.62s linear infinite; flex: 0 0 auto; }
-    .wallet-hero-scan-track { position: relative; height: 50px; overflow: hidden; border-radius: 999px; background: linear-gradient(90deg, rgba(156,225,255,0.10), rgba(120,243,164,0.14)); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); }
-    .wallet-hero-scan-runner { position: absolute; left: calc((100% - 92px) * var(--wallet-hero-scan-progress, 0)); bottom: -6px; width: 60px; height: 60px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 7px rgba(156,225,255,0.68)); animation: walletHeroScanBob 0.22s ease-in-out infinite alternate; }
-    .wallet-hero-scan-portal { position: absolute; right: 7px; bottom: 3px; width: 34px; height: 42px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 8px rgba(137, 240, 255, 0.55)); animation: walletHeroScanPortalPulse 0.8s ease-in-out infinite alternate; }
+    .wallet-hero-scan-track { position: relative; height: 45px; overflow: hidden; border-radius: 999px; background: linear-gradient(90deg, rgba(156,225,255,0.10), rgba(120,243,164,0.14)); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); }
+    .wallet-hero-scan-runner { position: absolute; left: calc((100% - 92px) * var(--wallet-hero-scan-progress, 0)); bottom: -6px; width: 54px; height: 54px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 7px rgba(156,225,255,0.68)); animation: walletHeroScanBob 0.22s ease-in-out infinite alternate; }
+    .wallet-hero-scan-portal { position: absolute; right: 7px; bottom: 3px; width: 31px; height: 38px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 8px rgba(137, 240, 255, 0.55)); animation: walletHeroScanPortalPulse 0.8s ease-in-out infinite alternate; }
     .wallet-hero-scan-status.is-done .wallet-hero-scan-spinner { border-color: rgba(120,243,164,0.28); border-top-color: #78f3a4; animation: walletHeroScanPulse 0.75s ease-in-out infinite alternate; }
     @keyframes walletHeroScanSpin { to { transform: rotate(360deg); } }
     @keyframes walletHeroScanPulse { from { transform: scale(0.86); opacity: 0.68; } to { transform: scale(1.08); opacity: 1; } }
@@ -21953,6 +21953,12 @@ function canSubmitRewardClaims() {
     els.seerIntroModal.addEventListener('pointerdown', claimHowToPlayFocus, true);
     els.seerIntroModal.addEventListener('click', claimHowToPlayFocus, true);
     els.seerIntroModal.addEventListener('touchstart', claimHowToPlayFocus, { capture: true, passive: true });
+    els.seerIntroModal.addEventListener('click', (event) => {
+      if (!isHowToPlayVisible()) return;
+      if (event.target === els.seerIntroModal) {
+        finishHowToPlayGuide(event);
+      }
+    });
   }
   if (els.seerIntroOkBtn) {
     els.seerIntroOkBtn.onclick = (event) => { finishHowToPlayGuide(event); };

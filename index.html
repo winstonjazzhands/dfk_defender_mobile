@@ -459,7 +459,7 @@
 <button disabled="" id="upgradeBtn">Level Up</button>
 <button disabled="" id="moveBtn">Move</button>
 <button class="secondary" disabled="" id="cancelActionBtn" type="button">Cancel Action</button>
-<button class="secondary desktop-only-inline" disabled="" id="maxLevelBtn">Max Lvl</button>
+<button class="secondary desktop-only-inline" disabled="" id="maxLevelBtn">Max Level</button>
 <button aria-hidden="true" class="secondary hidden" disabled="" hidden="" id="rebuildBarriersBtn" tabindex="-1">Rebuild Barriers</button>
 </div>
 <div class="abilities-panel" id="abilitiesPanel"></div>
@@ -782,6 +782,31 @@
 <button aria-label="Dismiss install prompt" class="mobile-install-dismiss" id="mobileInstallDismissBtn" type="button">×</button>
 </div>
 </div>
+<div class="mobile-top-controls" id="mobileTopControls" aria-hidden="false">
+<div class="mobile-primary-actions" id="mobilePrimaryActions">
+<button class="mobile-primary-btn" id="mobileConnectBtn" type="button"><span class="mobile-primary-icon" aria-hidden="true">🔗</span><span>Connect</span></button>
+<button class="mobile-primary-btn" id="mobileTrackingBtn" type="button"><span class="mobile-primary-icon" aria-hidden="true">⌁</span><span>Enable<br/>Run Tracking</span></button>
+<button class="mobile-primary-btn" id="mobileNextWaveBtn" type="button"><span class="mobile-primary-icon" aria-hidden="true">⏭</span><span>Next Wave</span></button>
+<button class="mobile-primary-btn" id="mobileAutoStartBtn" type="button"><span class="mobile-primary-icon mobile-play-icon" aria-hidden="true">▶</span><span>Autostart</span></button>
+<button class="mobile-primary-btn" id="mobileNewRunBtn" type="button"><span class="mobile-primary-icon" aria-hidden="true">📜</span><span>New Run</span></button>
+<button class="mobile-primary-btn" id="mobileRunManagerBtn" type="button"><span class="mobile-primary-icon" aria-hidden="true">☷</span><span>Run Manager</span></button>
+</div>
+<div aria-hidden="true" class="mobile-flyout-stack" id="mobileFlyoutStack">
+<button aria-controls="mobileHireMenu" aria-expanded="false" class="mobile-flyout-tab" id="mobileHireMenuBtn" type="button">
+<span class="mobile-flyout-label">Hire</span>
+<span aria-hidden="true" class="mobile-flyout-chevron">▸</span>
+</button>
+<button aria-controls="mobileFuncMenu" aria-expanded="false" class="mobile-flyout-tab" id="mobileFuncMenuBtn" type="button">
+<span class="mobile-flyout-label">Func</span>
+<span aria-hidden="true" class="mobile-flyout-chevron">▸</span>
+</button>
+<button aria-controls="mobileHeroMenu" aria-expanded="false" class="mobile-flyout-tab" id="mobileHeroMenuBtn" type="button">
+<span class="mobile-flyout-label">Hero</span>
+<span aria-hidden="true" class="mobile-flyout-chevron">▸</span>
+</button>
+
+</div>
+</div>
 <button aria-label="Close mobile menu" class="mobile-menu-overlay hidden" id="mobileMenuOverlay" type="button"></button>
 <div aria-hidden="true" class="mobile-menu-shell hidden" id="mobileMenuShell">
 <div aria-hidden="true" class="mobile-menu-card mobile-flyout-menu hidden" id="mobileFuncMenu">
@@ -807,20 +832,6 @@
 <div class="mobile-menu-title">HIRE</div>
 <div class="mobile-hire-host" id="mobileHireHost"></div>
 </div>
-</div>
-<div aria-hidden="true" class="mobile-flyout-stack" id="mobileFlyoutStack">
-<button aria-controls="mobileHireMenu" aria-expanded="false" class="mobile-flyout-tab" id="mobileHireMenuBtn" type="button">
-<span class="mobile-flyout-label">Hire</span>
-<span aria-hidden="true" class="mobile-flyout-chevron">▸</span>
-</button>
-<button aria-controls="mobileFuncMenu" aria-expanded="false" class="mobile-flyout-tab" id="mobileFuncMenuBtn" type="button">
-<span class="mobile-flyout-label">Func</span>
-<span aria-hidden="true" class="mobile-flyout-chevron">▸</span>
-</button>
-<button aria-controls="mobileHeroMenu" aria-expanded="false" class="mobile-flyout-tab" id="mobileHeroMenuBtn" type="button">
-<span class="mobile-flyout-label">Hero</span>
-<span aria-hidden="true" class="mobile-flyout-chevron">▸</span>
-</button>
 </div>
 <div aria-hidden="true" class="mobile-quick-rail" id="mobileQuickRail">
 <div aria-live="polite" class="mobile-quick-status" id="mobileQuickStatus">
@@ -850,7 +861,7 @@
 <button class="mobile-bottom-btn mobile-ability-btn" disabled="" id="mobileAbilityBtn1" type="button">A1</button>
 <button class="mobile-bottom-btn mobile-ability-btn" disabled="" id="mobileAbilityBtn2" type="button">A2</button>
 <button class="mobile-bottom-btn mobile-ability-btn" disabled="" id="mobileAbilityBtn3" type="button">A3</button>
-<button class="mobile-bottom-btn mobile-ability-btn mobile-max-level-btn" disabled="" id="mobileAbilityBtn4" type="button">Max Lvl</button>
+<button class="mobile-bottom-btn mobile-ability-btn mobile-max-level-btn" disabled="" id="mobileAbilityBtn4" type="button">Max Level</button>
 </div>
 <div class="mobile-hero-actions" id="mobileHeroActions">
 <button class="mobile-primary-btn mobile-action-btn" disabled="" id="mobileMoveActionBtn" type="button"><span class="mobile-primary-icon" aria-hidden="true">✥</span><span>Move</span></button>
@@ -860,13 +871,6 @@
 <div class="mobile-cooldown-note">Cooldowns start when the wave begins.</div>
 </div>
 <div aria-live="polite" class="mobile-run-save-warning hidden" id="mobileRunSaveWarning"></div>
-<div class="mobile-primary-actions" id="mobilePrimaryActions">
-<button class="mobile-primary-btn" id="mobileConnectBtn" type="button"><span class="mobile-primary-icon" aria-hidden="true">🔗</span><span>Connect</span></button>
-<button class="mobile-primary-btn" id="mobileTrackingBtn" type="button"><span class="mobile-primary-icon" aria-hidden="true">⌁</span><span>Enable<br/>Run Tracking</span></button>
-<button class="mobile-primary-btn" id="mobileNextWaveBtn" type="button"><span class="mobile-primary-icon" aria-hidden="true">⏭</span><span>Next Wave</span></button>
-<button class="mobile-primary-btn" id="mobileAutoStartBtn" type="button"><span class="mobile-primary-icon mobile-play-icon" aria-hidden="true">▶</span><span>Autostart</span></button>
-<button class="mobile-primary-btn" id="mobileNewRunBtn" type="button"><span class="mobile-primary-icon" aria-hidden="true">📜</span><span>New Run</span></button>
-<button class="mobile-primary-btn" id="mobileRunManagerBtn" type="button"><span class="mobile-primary-icon" aria-hidden="true">☷</span><span>Run Manager</span></button>
 </div>
 </div>
 </div>

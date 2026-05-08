@@ -207,7 +207,7 @@ body::before {
 .grid {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(14, var(--tile-size));
+  grid-template-columns: repeat(13, var(--tile-size));
   grid-template-rows: repeat(6, var(--tile-size));
   gap: var(--tile-gap);
   justify-content: flex-start;
@@ -487,8 +487,8 @@ body::before {
 }
 
 .bottom-panel {
-  width: min(calc(13 * var(--tile-size) + 12 * var(--tile-gap)), 100%);
-  max-width: calc(13 * var(--tile-size) + 12 * var(--tile-gap));
+  width: min(calc(12 * var(--tile-size) + 11 * var(--tile-gap)), 100%);
+  max-width: calc(12 * var(--tile-size) + 11 * var(--tile-gap));
   margin: 5px auto 0;
   padding: 8px 10px 10px;
   position: relative;
@@ -13019,5 +13019,1522 @@ body::after {
   .mobile-bottom-collapse {
     min-height: 22px !important;
     height: 22px !important;
+  }
+}
+
+/* v46.9.1.305m mobile board update: 7 columns x 12 rows and compact closed hero actions */
+@media (max-width: 1024px) and (orientation: portrait) {
+  :root {
+    --mobile-board-cols: 7;
+    --mobile-board-rows: 12;
+    --tile-size: min(76px, calc((100vw - var(--mobile-board-left) - var(--mobile-board-right) - (6 * var(--tile-gap))) / 7)) !important;
+    --board-width: calc(7 * var(--tile-size) + 6 * var(--tile-gap)) !important;
+    --board-height: calc(12 * var(--tile-size) + 11 * var(--tile-gap)) !important;
+  }
+
+  #grid.grid,
+  .grid {
+    width: var(--board-width) !important;
+    min-width: var(--board-width) !important;
+    max-width: var(--board-width) !important;
+    height: var(--board-height) !important;
+    min-height: var(--board-height) !important;
+    max-height: var(--board-height) !important;
+    grid-template-columns: repeat(7, var(--tile-size)) !important;
+    grid-template-rows: repeat(12, var(--tile-size)) !important;
+  }
+
+  .mobile-hud.bar-collapsed .mobile-active-skills-card .mobile-hero-actions {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+    margin-top: 5px !important;
+  }
+
+  .mobile-hud.bar-collapsed .mobile-active-skills-card .mobile-action-btn,
+  .mobile-hud.bar-collapsed #mobileBottomBar .mobile-action-btn {
+    min-height: 29px !important;
+    height: 29px !important;
+    padding: 2px 4px !important;
+    gap: 1px !important;
+    border-radius: 8px !important;
+    font-size: 0.42rem !important;
+    line-height: 1 !important;
+  }
+
+  .mobile-hud.bar-collapsed .mobile-active-skills-card .mobile-action-btn .mobile-primary-icon,
+  .mobile-hud.bar-collapsed #mobileBottomBar .mobile-action-btn .mobile-primary-icon {
+    font-size: 0.82rem !important;
+    line-height: 1 !important;
+  }
+}
+
+@media (max-width: 430px) and (orientation: portrait) {
+  :root {
+    --tile-size: min(72px, calc((100vw - var(--mobile-board-left) - var(--mobile-board-right) - (6 * var(--tile-gap))) / 7)) !important;
+    --board-width: calc(7 * var(--tile-size) + 6 * var(--tile-gap)) !important;
+    --board-height: calc(12 * var(--tile-size) + 11 * var(--tile-gap)) !important;
+  }
+
+  #grid.grid,
+  .grid {
+    grid-template-columns: repeat(7, var(--tile-size)) !important;
+    grid-template-rows: repeat(12, var(--tile-size)) !important;
+  }
+}
+
+
+/* v46.9.1.305m mobile polish hotfix */
+@media (max-width: 1024px) and (orientation: portrait) {
+  .wallet-loading-text,
+  .wallet-checking-text,
+  .wallet-status-text {
+    font-size: 0.78rem !important;
+    line-height: 1.1 !important;
+  }
+
+  #gameBoard,
+  .game-board,
+  .board-wrap {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .mobile-top-nav,
+  .mobile-top-buttons {
+    gap: 4px !important;
+  }
+
+  .mobile-top-nav button,
+  .mobile-top-buttons button {
+    min-height: 30px !important;
+    padding: 4px 8px !important;
+    line-height: 1 !important;
+  }
+}
+
+
+/* v46.9.1.306m requested mobile layout: 6 x 13 board, top nav, full activity dock, centered How to Play */
+@media (max-width: 1024px) and (orientation: portrait) {
+  :root {
+    --mobile-board-cols: 6 !important;
+    --mobile-board-rows: 13 !important;
+    --mobile-safe-top: max(8px, env(safe-area-inset-top, 0px)) !important;
+    --mobile-safe-left: max(8px, env(safe-area-inset-left, 0px)) !important;
+    --mobile-safe-right: max(8px, env(safe-area-inset-right, 0px)) !important;
+    --mobile-top-tabs-h: 42px !important;
+    --mobile-bottom-reserve: 206px !important;
+    --mobile-board-left: var(--mobile-safe-left) !important;
+    --mobile-board-right: var(--mobile-safe-right) !important;
+    --tile-gap: 3px !important;
+    --tile-size: min(
+      74px,
+      calc((100vw - var(--mobile-safe-left) - var(--mobile-safe-right) - (5 * var(--tile-gap))) / 6),
+      calc((100dvh - var(--mobile-safe-top) - var(--mobile-top-tabs-h) - var(--mobile-bottom-reserve) - 70px - (12 * var(--tile-gap))) / 13)
+    ) !important;
+    --board-width: calc(6 * var(--tile-size) + 5 * var(--tile-gap)) !important;
+    --board-height: calc(13 * var(--tile-size) + 12 * var(--tile-gap)) !important;
+  }
+
+  .center-panel {
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding-top: calc(var(--mobile-safe-top) + var(--mobile-top-tabs-h) + 6px) !important;
+    padding-left: var(--mobile-safe-left) !important;
+    padding-right: var(--mobile-safe-right) !important;
+    padding-bottom: calc(var(--mobile-bottom-reserve) + var(--mobile-safe-bottom, 8px)) !important;
+    overflow: hidden !important;
+  }
+
+  #grid.grid,
+  .center-panel #grid.grid,
+  .grid {
+    width: var(--board-width) !important;
+    min-width: var(--board-width) !important;
+    max-width: var(--board-width) !important;
+    height: var(--board-height) !important;
+    min-height: var(--board-height) !important;
+    max-height: var(--board-height) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    transform: none !important;
+    transform-origin: top center !important;
+    grid-template-columns: repeat(6, var(--tile-size)) !important;
+    grid-template-rows: repeat(13, var(--tile-size)) !important;
+    gap: var(--tile-gap) !important;
+  }
+
+  .grid > .tile,
+  .tile {
+    width: var(--tile-size) !important;
+    height: var(--tile-size) !important;
+  }
+
+  #mobileFlyoutStack.mobile-flyout-stack,
+  #mobileFlyoutStack {
+    position: fixed !important;
+    top: var(--mobile-safe-top) !important;
+    left: var(--mobile-safe-left) !important;
+    right: var(--mobile-safe-right) !important;
+    width: auto !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    z-index: 4400 !important;
+  }
+
+  #mobileFlyoutStack .mobile-flyout-tab,
+  .mobile-flyout-tab {
+    width: auto !important;
+    min-width: 0 !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 5px 7px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    border-radius: 8px !important;
+    background: linear-gradient(180deg, rgba(31, 54, 111, 0.98), rgba(16, 28, 63, 0.98)) !important;
+    border: 1px solid rgba(98, 142, 255, 0.82) !important;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.04) !important;
+  }
+
+  #mobileFlyoutStack .mobile-flyout-label,
+  .mobile-flyout-label {
+    font-size: 0.68rem !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    white-space: nowrap !important;
+  }
+
+  #mobileFlyoutStack .mobile-flyout-chevron,
+  .mobile-flyout-chevron {
+    margin: 0 !important;
+    font-size: 0.72rem !important;
+    line-height: 1 !important;
+  }
+
+  .mobile-flyout-menu,
+  .mobile-flyout-menu:not(.hidden) {
+    left: var(--mobile-safe-left) !important;
+    right: var(--mobile-safe-right) !important;
+    top: calc(var(--mobile-safe-top) + var(--mobile-top-tabs-h) + 4px) !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: calc(100dvh - var(--mobile-safe-top) - var(--mobile-top-tabs-h) - var(--mobile-bottom-reserve) - 18px) !important;
+    transform: translateY(-8px) !important;
+  }
+
+  .mobile-flyout-menu:not(.hidden) {
+    transform: translateY(0) !important;
+  }
+
+  #statusOverlay.status-overlay,
+  .status-overlay {
+    left: 50% !important;
+    right: auto !important;
+    top: calc(var(--mobile-safe-top) + var(--mobile-top-tabs-h) + 4px) !important;
+    width: min(calc(100vw - 28px), 360px) !important;
+    max-width: calc(100vw - 28px) !important;
+    transform: translateX(-50%) !important;
+    text-align: center !important;
+    font-size: 0.78rem !important;
+    line-height: 1.16 !important;
+    padding: 8px 10px !important;
+    border-radius: 12px !important;
+    pointer-events: none !important;
+  }
+
+  #mobileBottomBar.mobile-bottom-bar,
+  #mobileBottomBar {
+    left: var(--mobile-safe-left) !important;
+    right: var(--mobile-safe-right) !important;
+    bottom: max(6px, env(safe-area-inset-bottom, 0px)) !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 5px !important;
+    padding: 6px 8px 8px !important;
+    border-radius: 14px 14px 10px 10px !important;
+    max-height: var(--mobile-bottom-reserve) !important;
+    overflow: hidden !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  .mobile-bottom-collapse {
+    min-height: 18px !important;
+    height: 18px !important;
+    padding: 0 6px !important;
+  }
+
+  .mobile-active-skills-card {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 5px !important;
+    padding: 5px !important;
+  }
+
+  .mobile-active-skills-header {
+    min-height: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .mobile-active-skills-count {
+    position: absolute !important;
+    left: 10px !important;
+    top: 28px !important;
+    width: 21px !important;
+    height: 21px !important;
+    font-size: 0.64rem !important;
+  }
+
+  .mobile-active-skills-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+    padding-left: 28px !important;
+  }
+
+  #mobileBottomBar .mobile-ability-btn,
+  #mobileBottomBar .mobile-bottom-btn {
+    min-height: 38px !important;
+    padding: 3px 4px !important;
+    font-size: 0.48rem !important;
+    line-height: 1.05 !important;
+    border-radius: 8px !important;
+  }
+
+  .mobile-active-skills-card .mobile-hero-actions,
+  #mobileHeroActions {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    margin-top: 3px !important;
+  }
+
+  .mobile-active-skills-card .mobile-action-btn,
+  #mobileBottomBar .mobile-action-btn {
+    min-height: 36px !important;
+    height: 36px !important;
+    padding: 2px 5px !important;
+    font-size: 0.44rem !important;
+    line-height: 1 !important;
+  }
+
+  .mobile-cooldown-note {
+    padding-top: 2px !important;
+    font-size: 0.5rem !important;
+    line-height: 1 !important;
+  }
+
+  .mobile-primary-actions,
+  #mobilePrimaryActions {
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+  }
+
+  .mobile-primary-btn,
+  #mobilePrimaryActions .mobile-primary-btn {
+    min-height: 44px !important;
+    padding: 3px 2px !important;
+    border-radius: 9px !important;
+    font-size: 0.44rem !important;
+    line-height: 1 !important;
+    gap: 2px !important;
+  }
+
+  .mobile-primary-icon {
+    font-size: 1rem !important;
+  }
+
+  .mobile-play-icon {
+    font-size: 1.18rem !important;
+  }
+
+  .mobile-hud.bar-collapsed .mobile-primary-actions,
+  .mobile-hud.bar-collapsed #mobilePrimaryActions,
+  .mobile-hud.bar-collapsed .mobile-active-skills-card .mobile-hero-actions,
+  .mobile-hud.bar-collapsed #mobileHeroActions,
+  .mobile-hud.bar-collapsed .mobile-cooldown-note {
+    display: grid !important;
+  }
+
+  #introModal.intro-modal,
+  #introModal:not(.hidden) {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    padding: max(12px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px)) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  #introModal.hidden {
+    display: none !important;
+  }
+
+  #introModal .intro-modal-card {
+    width: min(360px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 24px) !important;
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+    margin: auto !important;
+    transform: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+  }
+
+  #introModal .intro-body {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 9px 10px !important;
+    font-size: 0.72rem !important;
+    line-height: 1.28 !important;
+  }
+
+  #introModal .intro-modal-footer {
+    flex: 0 0 auto !important;
+    padding: 8px 10px 10px !important;
+  }
+
+  #introModal .intro-modal-footer .small-action,
+  #introModal .intro-modal-footer .secondary {
+    min-height: 35px !important;
+    font-size: 0.68rem !important;
+  }
+}
+
+@media (max-width: 430px) and (orientation: portrait) {
+  :root {
+    --mobile-bottom-reserve: 196px !important;
+    --tile-size: min(
+      62px,
+      calc((100vw - var(--mobile-safe-left) - var(--mobile-safe-right) - (5 * var(--tile-gap))) / 6),
+      calc((100dvh - var(--mobile-safe-top) - var(--mobile-top-tabs-h) - var(--mobile-bottom-reserve) - 60px - (12 * var(--tile-gap))) / 13)
+    ) !important;
+  }
+  #mobileBottomBar .mobile-ability-btn,
+  #mobileBottomBar .mobile-bottom-btn {
+    min-height: 35px !important;
+    font-size: 0.43rem !important;
+  }
+  .mobile-active-skills-card .mobile-action-btn,
+  #mobileBottomBar .mobile-action-btn {
+    min-height: 32px !important;
+    height: 32px !important;
+  }
+  .mobile-primary-btn,
+  #mobilePrimaryActions .mobile-primary-btn {
+    min-height: 40px !important;
+    font-size: 0.4rem !important;
+  }
+}
+
+
+/* v46.9.1.306n mobile bottom interface: game buttons first, menu tabs second */
+@media (max-width: 1024px) {
+  #mobileBottomBar.mobile-bottom-bar,
+  #mobileBottomBar {
+    gap: 7px !important;
+    padding-top: 7px !important;
+  }
+
+  #mobileBottomBar #mobilePrimaryActions.mobile-primary-actions,
+  #mobileBottomBar .mobile-primary-actions {
+    order: 1 !important;
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+  }
+
+  #mobileBottomBar #mobileFlyoutStack.mobile-flyout-stack,
+  #mobileBottomBar .mobile-flyout-stack {
+    order: 2 !important;
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    padding-top: 7px !important;
+    border-top: 1px solid rgba(82, 113, 170, 0.52) !important;
+    z-index: auto !important;
+  }
+
+  #mobileBottomBar #mobileFlyoutStack .mobile-flyout-tab,
+  #mobileBottomBar .mobile-flyout-tab {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    padding: 4px 8px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    border-radius: 8px !important;
+    background: linear-gradient(180deg, rgba(22, 41, 78, 0.98), rgba(9, 20, 42, 0.98)) !important;
+    border: 1px solid rgba(76, 116, 185, 0.74) !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.035) !important;
+  }
+
+  #mobileBottomBar #mobileFlyoutStack .mobile-flyout-label,
+  #mobileBottomBar .mobile-flyout-label,
+  #mobileBottomBar #mobileFlyoutStack .mobile-flyout-chevron,
+  #mobileBottomBar .mobile-flyout-chevron {
+    font-size: 0.64rem !important;
+    line-height: 1 !important;
+    letter-spacing: 0.02em !important;
+    text-transform: uppercase !important;
+  }
+
+  #mobileBottomBar .mobile-active-skills-card { order: 3 !important; }
+  #mobileBottomBar #mobileRunSaveWarning { order: 4 !important; }
+
+  .wallet-hero-scan-status {
+    padding-top: 8px !important;
+    padding-bottom: 6px !important;
+    gap: 5px !important;
+    font-size: 15px !important;
+  }
+
+  .wallet-hero-scan-line { gap: 8px !important; }
+  .wallet-hero-scan-track { height: 45px !important; }
+  .wallet-hero-scan-runner { width: 54px !important; height: 54px !important; }
+  .wallet-hero-scan-portal { width: 31px !important; height: 38px !important; }
+}
+
+@media (max-width: 430px) and (orientation: portrait) {
+  #mobileBottomBar #mobilePrimaryActions.mobile-primary-actions,
+  #mobileBottomBar .mobile-primary-actions {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+  }
+  #mobileBottomBar #mobileFlyoutStack.mobile-flyout-stack,
+  #mobileBottomBar .mobile-flyout-stack {
+    gap: 4px !important;
+    padding-top: 6px !important;
+  }
+  #mobileBottomBar #mobileFlyoutStack .mobile-flyout-tab,
+  #mobileBottomBar .mobile-flyout-tab {
+    min-height: 30px !important;
+    height: 30px !important;
+  }
+  #mobileBottomBar #mobileFlyoutStack .mobile-flyout-label,
+  #mobileBottomBar .mobile-flyout-label,
+  #mobileBottomBar #mobileFlyoutStack .mobile-flyout-chevron,
+  #mobileBottomBar .mobile-flyout-chevron {
+    font-size: 0.56rem !important;
+  }
+}
+
+/* v46.9.1.306n+ requested mobile menu layout: top game controls, full-width Hire/Func/Hero row, centered board, hero dock health row */
+@media (max-width: 1024px) and (orientation: portrait) {
+  :root {
+    --mobile-menu-x: max(12px, env(safe-area-inset-left, 0px)) !important;
+    --mobile-menu-r: max(12px, env(safe-area-inset-right, 0px)) !important;
+    --mobile-top-controls-h: 104px !important;
+    --mobile-bottom-reserve: 146px !important;
+    --mobile-board-left: max(10px, env(safe-area-inset-left, 0px)) !important;
+    --mobile-board-right: max(10px, env(safe-area-inset-right, 0px)) !important;
+    --tile-gap: 3px !important;
+    --tile-size: min(
+      74px,
+      calc((100vw - var(--mobile-board-left) - var(--mobile-board-right) - (5 * var(--tile-gap))) / 6),
+      calc((100dvh - var(--mobile-safe-top) - var(--mobile-top-controls-h) - var(--mobile-bottom-reserve) - 74px - (12 * var(--tile-gap))) / 13)
+    ) !important;
+    --board-width: calc(6 * var(--tile-size) + 5 * var(--tile-gap)) !important;
+    --board-height: calc(13 * var(--tile-size) + 12 * var(--tile-gap)) !important;
+  }
+
+  .center-panel {
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding-top: calc(var(--mobile-safe-top) + var(--mobile-top-controls-h) + 8px) !important;
+    padding-left: var(--mobile-board-left) !important;
+    padding-right: var(--mobile-board-right) !important;
+    padding-bottom: calc(var(--mobile-bottom-reserve) + var(--mobile-safe-bottom, 8px)) !important;
+    overflow: hidden !important;
+  }
+
+  #grid.grid,
+  .center-panel #grid.grid,
+  .grid {
+    width: var(--board-width) !important;
+    min-width: var(--board-width) !important;
+    max-width: var(--board-width) !important;
+    height: var(--board-height) !important;
+    min-height: var(--board-height) !important;
+    max-height: var(--board-height) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    place-self: center start !important;
+    transform: none !important;
+    transform-origin: top center !important;
+    grid-template-columns: repeat(6, var(--tile-size)) !important;
+    grid-template-rows: repeat(13, var(--tile-size)) !important;
+    gap: var(--tile-gap) !important;
+  }
+
+  .grid > .tile,
+  .tile {
+    width: var(--tile-size) !important;
+    height: var(--tile-size) !important;
+  }
+
+  #mobilePrimaryActions.mobile-primary-actions,
+  .mobile-primary-actions {
+    position: fixed !important;
+    top: calc(var(--mobile-safe-top) + 4px) !important;
+    left: var(--mobile-menu-x) !important;
+    right: var(--mobile-menu-r) !important;
+    width: auto !important;
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+    z-index: 4600 !important;
+    pointer-events: auto !important;
+    order: 0 !important;
+  }
+
+  #mobilePrimaryActions .mobile-primary-btn,
+  .mobile-primary-actions .mobile-primary-btn {
+    min-width: 0 !important;
+    min-height: 54px !important;
+    height: 54px !important;
+    padding: 4px 2px !important;
+    border-radius: 10px !important;
+    font-size: 0.5rem !important;
+    line-height: 1.02 !important;
+    letter-spacing: 0.025em !important;
+    gap: 3px !important;
+  }
+
+  #mobilePrimaryActions .mobile-primary-icon,
+  .mobile-primary-actions .mobile-primary-icon {
+    font-size: 1.2rem !important;
+  }
+
+  #mobilePrimaryActions .mobile-play-icon,
+  .mobile-primary-actions .mobile-play-icon {
+    font-size: 1.38rem !important;
+  }
+
+  #mobileFlyoutStack.mobile-flyout-stack,
+  #mobileFlyoutStack {
+    position: fixed !important;
+    top: calc(var(--mobile-safe-top) + 66px) !important;
+    left: var(--mobile-menu-x) !important;
+    right: var(--mobile-menu-r) !important;
+    width: auto !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    z-index: 4550 !important;
+    pointer-events: auto !important;
+  }
+
+  #mobileFlyoutStack .mobile-flyout-tab,
+  .mobile-flyout-tab {
+    width: auto !important;
+    min-width: 0 !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 4px 6px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    text-transform: uppercase !important;
+  }
+
+  #mobileFlyoutStack .mobile-flyout-label,
+  .mobile-flyout-label {
+    font-size: 0.72rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.04em !important;
+    line-height: 1 !important;
+  }
+
+  #mobileFlyoutStack .mobile-flyout-chevron,
+  .mobile-flyout-chevron {
+    margin: 0 !important;
+    font-size: 0.7rem !important;
+    line-height: 1 !important;
+  }
+
+  .mobile-flyout-menu,
+  .mobile-flyout-menu:not(.hidden) {
+    left: var(--mobile-menu-x) !important;
+    right: var(--mobile-menu-r) !important;
+    top: calc(var(--mobile-safe-top) + var(--mobile-top-controls-h) + 6px) !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: calc(100dvh - var(--mobile-safe-top) - var(--mobile-top-controls-h) - var(--mobile-bottom-reserve) - 22px) !important;
+    z-index: 4700 !important;
+  }
+
+  #statusOverlay.status-overlay,
+  .status-overlay {
+    top: calc(var(--mobile-safe-top) + var(--mobile-top-controls-h) + 4px) !important;
+    left: 50% !important;
+    right: auto !important;
+    width: min(calc(100vw - 30px), 380px) !important;
+    max-width: calc(100vw - 30px) !important;
+    transform: translateX(-50%) !important;
+    min-height: 0 !important;
+    max-height: 52px !important;
+    padding: 5px 8px !important;
+    font-size: 0.56rem !important;
+    line-height: 1.05 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+  }
+
+  #mobileBottomBar.mobile-bottom-bar,
+  #mobileBottomBar {
+    left: var(--mobile-menu-x) !important;
+    right: var(--mobile-menu-r) !important;
+    bottom: calc(var(--mobile-safe-bottom, 8px) + 8px) !important;
+    width: auto !important;
+    max-height: var(--mobile-bottom-reserve) !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+    padding: 7px 9px 9px !important;
+    border-radius: 16px !important;
+    overflow: visible !important;
+  }
+
+  .mobile-bottom-collapse {
+    min-height: 20px !important;
+    height: 20px !important;
+  }
+
+  #mobileBottomBar .mobile-primary-actions {
+    position: fixed !important;
+  }
+
+  .mobile-active-skills-card {
+    position: relative !important;
+    padding: 36px 7px 7px !important;
+    border-radius: 13px !important;
+  }
+
+  .mobile-active-skills-header,
+  .mobile-active-skills-count,
+  .mobile-cooldown-note,
+  #mobileHeroActions {
+    display: none !important;
+  }
+
+  .mobile-active-skills-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+    padding-left: 0 !important;
+  }
+
+  #mobileBottomBar .mobile-ability-btn,
+  #mobileBottomBar .mobile-bottom-btn {
+    min-height: 48px !important;
+    height: 48px !important;
+    padding: 4px 5px !important;
+    border-radius: 10px !important;
+    font-size: 0.58rem !important;
+    line-height: 1.05 !important;
+  }
+
+  #mobileBottomBar .ability-name,
+  #mobileBottomBar .ability-meta {
+    font-size: 0.58rem !important;
+    line-height: 1.05 !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bars {
+    position: absolute !important;
+    top: 7px !important;
+    left: 7px !important;
+    right: 7px !important;
+    width: auto !important;
+    margin: 0 !important;
+    display: grid !important;
+    gap: 0 !important;
+    z-index: 2 !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bar-row {
+    grid-template-columns: 24px minmax(0, 1fr) 70px !important;
+    gap: 5px !important;
+    align-items: center !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bar-row:nth-child(n+2) {
+    display: none !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bar {
+    height: 16px !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(160, 255, 178, 0.6) !important;
+    background: rgba(2, 14, 9, 0.8) !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bar-label,
+  #mobileBottomBar .mobile-hero-bar-value {
+    font-size: 0.58rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    color: #effff3 !important;
+    opacity: 0.98 !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bar-value {
+    text-align: right !important;
+  }
+
+  .mobile-hud.bar-collapsed #mobileBottomBar.mobile-bottom-bar,
+  .mobile-hud.bar-collapsed #mobileBottomBar {
+    transform: translateY(calc(100% - 28px)) !important;
+    opacity: 0.94 !important;
+  }
+}
+
+@media (max-width: 430px) and (orientation: portrait) {
+  :root {
+    --mobile-top-controls-h: 100px !important;
+    --mobile-bottom-reserve: 138px !important;
+  }
+  #mobilePrimaryActions .mobile-primary-btn,
+  .mobile-primary-actions .mobile-primary-btn {
+    min-height: 50px !important;
+    height: 50px !important;
+    font-size: 0.43rem !important;
+  }
+  #mobilePrimaryActions .mobile-primary-icon,
+  .mobile-primary-actions .mobile-primary-icon {
+    font-size: 1.08rem !important;
+  }
+  #mobileFlyoutStack.mobile-flyout-stack,
+  #mobileFlyoutStack {
+    top: calc(var(--mobile-safe-top) + 60px) !important;
+  }
+  #mobileFlyoutStack .mobile-flyout-tab,
+  .mobile-flyout-tab {
+    height: 36px !important;
+    min-height: 36px !important;
+  }
+  #mobileFlyoutStack .mobile-flyout-label,
+  .mobile-flyout-label {
+    font-size: 0.66rem !important;
+  }
+  #mobileBottomBar .mobile-ability-btn,
+  #mobileBottomBar .mobile-bottom-btn {
+    min-height: 44px !important;
+    height: 44px !important;
+    font-size: 0.52rem !important;
+  }
+}
+
+/* v46.9.1.306q mobile menu recovery: screenshot-style top controls, centered board, bottom hero action dock */
+@media (max-width: 1024px) and (orientation: portrait) {
+  :root {
+    --mobile-safe-top: max(6px, env(safe-area-inset-top, 0px)) !important;
+    --mobile-safe-left: max(6px, env(safe-area-inset-left, 0px)) !important;
+    --mobile-safe-right: max(6px, env(safe-area-inset-right, 0px)) !important;
+    --mobile-safe-bottom: max(6px, env(safe-area-inset-bottom, 0px)) !important;
+    --mobile-menu-x: var(--mobile-safe-left) !important;
+    --mobile-menu-r: var(--mobile-safe-right) !important;
+    --mobile-top-controls-h: 92px !important;
+    --mobile-bottom-reserve: 132px !important;
+    --mobile-board-left: var(--mobile-safe-left) !important;
+    --mobile-board-right: var(--mobile-safe-right) !important;
+    --tile-gap: 3px !important;
+    --tile-size: min(
+      76px,
+      calc((100vw - var(--mobile-board-left) - var(--mobile-board-right) - (5 * var(--tile-gap))) / 6),
+      calc((100dvh - var(--mobile-safe-top) - var(--mobile-top-controls-h) - var(--mobile-bottom-reserve) - 64px - (12 * var(--tile-gap))) / 13)
+    ) !important;
+    --board-width: calc(6 * var(--tile-size) + 5 * var(--tile-gap)) !important;
+    --board-height: calc(13 * var(--tile-size) + 12 * var(--tile-gap)) !important;
+  }
+
+  .center-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding-top: calc(var(--mobile-safe-top) + var(--mobile-top-controls-h) + 6px) !important;
+    padding-left: var(--mobile-board-left) !important;
+    padding-right: var(--mobile-board-right) !important;
+    padding-bottom: calc(var(--mobile-bottom-reserve) + var(--mobile-safe-bottom) + 8px) !important;
+    overflow: hidden !important;
+  }
+
+  #grid.grid,
+  .center-panel #grid.grid,
+  .grid {
+    width: var(--board-width) !important;
+    min-width: var(--board-width) !important;
+    max-width: var(--board-width) !important;
+    height: var(--board-height) !important;
+    min-height: var(--board-height) !important;
+    max-height: var(--board-height) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    align-self: center !important;
+    justify-self: center !important;
+    place-self: center !important;
+    transform: none !important;
+    transform-origin: top center !important;
+    grid-template-columns: repeat(6, var(--tile-size)) !important;
+    grid-template-rows: repeat(13, var(--tile-size)) !important;
+    gap: var(--tile-gap) !important;
+  }
+
+  .grid > .tile,
+  .tile {
+    width: var(--tile-size) !important;
+    height: var(--tile-size) !important;
+  }
+
+  #mobilePrimaryActions.mobile-primary-actions,
+  #mobileBottomBar #mobilePrimaryActions.mobile-primary-actions,
+  .mobile-primary-actions {
+    position: fixed !important;
+    top: calc(var(--mobile-safe-top) + 0px) !important;
+    left: var(--mobile-menu-x) !important;
+    right: var(--mobile-menu-r) !important;
+    width: auto !important;
+    height: 42px !important;
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    z-index: 7000 !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  #mobilePrimaryActions .mobile-primary-btn,
+  #mobileBottomBar #mobilePrimaryActions .mobile-primary-btn,
+  .mobile-primary-actions .mobile-primary-btn {
+    min-width: 0 !important;
+    width: 100% !important;
+    min-height: 42px !important;
+    height: 42px !important;
+    padding: 3px 2px !important;
+    border-radius: 7px !important;
+    border: 1px solid rgba(88, 121, 190, 0.86) !important;
+    background: linear-gradient(180deg, rgba(18, 31, 61, 0.98), rgba(8, 17, 37, 0.99)) !important;
+    color: #f7f9ff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    font-size: 0.36rem !important;
+    font-weight: 900 !important;
+    line-height: 1.02 !important;
+    letter-spacing: 0.015em !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 2px 7px rgba(0,0,0,0.26) !important;
+    overflow: hidden !important;
+  }
+
+  #mobilePrimaryActions .mobile-primary-icon,
+  .mobile-primary-actions .mobile-primary-icon {
+    display: block !important;
+    font-size: 0.92rem !important;
+    line-height: 0.95 !important;
+  }
+
+  #mobilePrimaryActions .mobile-play-icon,
+  .mobile-primary-actions .mobile-play-icon {
+    font-size: 1.08rem !important;
+    color: #a23eff !important;
+  }
+
+  #mobileFlyoutStack.mobile-flyout-stack,
+  #mobileBottomBar #mobileFlyoutStack.mobile-flyout-stack,
+  #mobileFlyoutStack {
+    position: fixed !important;
+    top: calc(var(--mobile-safe-top) + 48px) !important;
+    left: var(--mobile-menu-x) !important;
+    right: var(--mobile-menu-r) !important;
+    width: auto !important;
+    height: 36px !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    z-index: 6990 !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  #mobileFlyoutStack .mobile-flyout-tab,
+  #mobileBottomBar #mobileFlyoutStack .mobile-flyout-tab,
+  .mobile-flyout-tab {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 4px 6px !important;
+    border-radius: 6px !important;
+    border: 1px solid rgba(73, 108, 181, 0.9) !important;
+    background: linear-gradient(180deg, rgba(20, 36, 72, 0.98), rgba(8, 18, 40, 0.99)) !important;
+    color: #f5f7ff !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    text-transform: uppercase !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.035) !important;
+  }
+
+  #mobileFlyoutStack .mobile-flyout-label,
+  #mobileBottomBar #mobileFlyoutStack .mobile-flyout-label,
+  .mobile-flyout-label {
+    font-size: 0.62rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.04em !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  #mobileFlyoutStack .mobile-flyout-chevron,
+  .mobile-flyout-chevron {
+    margin: 0 !important;
+    font-size: 0.62rem !important;
+    line-height: 1 !important;
+  }
+
+  .mobile-flyout-menu,
+  .mobile-flyout-menu:not(.hidden) {
+    position: fixed !important;
+    top: calc(var(--mobile-safe-top) + var(--mobile-top-controls-h) + 4px) !important;
+    left: var(--mobile-menu-x) !important;
+    right: var(--mobile-menu-r) !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: calc(100dvh - var(--mobile-safe-top) - var(--mobile-top-controls-h) - var(--mobile-bottom-reserve) - 18px) !important;
+    overflow: auto !important;
+    z-index: 7100 !important;
+    transform: none !important;
+  }
+
+  #mobileBottomBar.mobile-bottom-bar,
+  #mobileBottomBar {
+    position: fixed !important;
+    left: var(--mobile-safe-left) !important;
+    right: var(--mobile-safe-right) !important;
+    bottom: var(--mobile-safe-bottom) !important;
+    width: auto !important;
+    max-height: var(--mobile-bottom-reserve) !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    padding: 8px !important;
+    border-radius: 13px !important;
+    border: 1px solid rgba(73, 105, 176, 0.85) !important;
+    background: linear-gradient(180deg, rgba(9, 21, 43, 0.99), rgba(4, 12, 26, 0.99)) !important;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.46), inset 0 0 0 1px rgba(255,255,255,0.04) !important;
+    z-index: 6800 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    overflow: hidden !important;
+  }
+
+  #mobileBottomBar .mobile-bottom-collapse,
+  .mobile-bottom-collapse,
+  #mobileBottomBar .mobile-hero-actions,
+  #mobileHeroActions,
+  #mobileBottomBar .mobile-cooldown-note,
+  .mobile-cooldown-note,
+  #mobileBottomBar #mobileRunSaveWarning.hidden {
+    display: none !important;
+  }
+
+  #mobileBottomBar .mobile-active-skills-card,
+  .mobile-active-skills-card {
+    position: relative !important;
+    order: 1 !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 7px !important;
+    min-height: 104px !important;
+    padding: 34px 0 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+
+  #mobileBottomBar .mobile-active-skills-header,
+  #mobileBottomBar .mobile-active-skills-count,
+  .mobile-active-skills-header,
+  .mobile-active-skills-count {
+    display: none !important;
+  }
+
+  #mobileBottomBar .mobile-active-skills-grid,
+  .mobile-active-skills-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #mobileBottomBar .mobile-ability-btn,
+  #mobileBottomBar .mobile-bottom-btn,
+  #mobileAbilityBtn1,
+  #mobileAbilityBtn2,
+  #mobileAbilityBtn3,
+  #mobileAbilityBtn4 {
+    min-width: 0 !important;
+    width: 100% !important;
+    min-height: 62px !important;
+    height: 62px !important;
+    padding: 5px 4px !important;
+    border-radius: 9px !important;
+    border: 1px solid rgba(85, 116, 190, 0.86) !important;
+    background: linear-gradient(180deg, rgba(18, 34, 69, 0.98), rgba(7, 17, 39, 0.99)) !important;
+    color: #f7f9ff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-size: 0.58rem !important;
+    font-weight: 900 !important;
+    line-height: 1.08 !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.035) !important;
+    overflow: hidden !important;
+  }
+
+  #mobileBottomBar .mobile-btn-art-slot,
+  #mobileBottomBar .mobile-btn-art-img,
+  #mobileBottomBar .mobile-btn-bg,
+  #mobileBottomBar .mobile-btn-bg-img,
+  #mobileBottomBar .mobile-btn-bg--empty,
+  #mobileBottomBar .mobile-btn-art-slot--empty {
+    display: none !important;
+  }
+
+  #mobileBottomBar .mobile-btn-copy {
+    display: grid !important;
+    gap: 2px !important;
+    width: 100% !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  #mobileBottomBar .ability-name,
+  #mobileBottomBar .ability-meta {
+    font-size: 0.58rem !important;
+    line-height: 1.08 !important;
+    font-weight: 900 !important;
+    white-space: normal !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bars {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: auto !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    z-index: 3 !important;
+    pointer-events: none !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bar-row {
+    display: grid !important;
+    grid-template-columns: minmax(40px, auto) minmax(0, 1fr) minmax(64px, auto) !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bar-row:nth-child(n+2) {
+    display: none !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bar-label,
+  #mobileBottomBar .mobile-hero-bar-value {
+    color: #f0fff4 !important;
+    font-size: 0.52rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    opacity: 1 !important;
+    text-transform: uppercase !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bar-value {
+    text-align: right !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bar {
+    height: 18px !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(145, 255, 169, 0.75) !important;
+    background: rgba(5, 18, 11, 0.9) !important;
+    overflow: hidden !important;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.5) !important;
+  }
+
+  #mobileBottomBar .mobile-hero-bar-fill.hp {
+    display: block !important;
+    height: 100% !important;
+    border-radius: inherit !important;
+    background: linear-gradient(90deg, #26b950, #86f063) !important;
+  }
+
+  .mobile-hud.bar-collapsed #mobileBottomBar.mobile-bottom-bar,
+  .mobile-hud.bar-collapsed #mobileBottomBar,
+  .mobile-hud.bar-collapsed .mobile-primary-actions,
+  .mobile-hud.bar-collapsed #mobilePrimaryActions,
+  .mobile-hud.bar-collapsed .mobile-flyout-stack,
+  .mobile-hud.bar-collapsed #mobileFlyoutStack,
+  .mobile-hud.bar-collapsed .mobile-active-skills-card {
+    display: grid !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  #statusOverlay.status-overlay,
+  .status-overlay {
+    top: calc(var(--mobile-safe-top) + var(--mobile-top-controls-h) + 4px) !important;
+    left: 50% !important;
+    right: auto !important;
+    width: min(360px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 24px) !important;
+    transform: translateX(-50%) !important;
+    padding: 5px 8px !important;
+    min-height: 0 !important;
+    max-height: 46px !important;
+    font-size: 0.56rem !important;
+    line-height: 1.05 !important;
+    overflow: hidden !important;
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 430px) and (orientation: portrait) {
+  :root {
+    --mobile-top-controls-h: 88px !important;
+    --mobile-bottom-reserve: 124px !important;
+    --tile-size: min(
+      64px,
+      calc((100vw - var(--mobile-board-left) - var(--mobile-board-right) - (5 * var(--tile-gap))) / 6),
+      calc((100dvh - var(--mobile-safe-top) - var(--mobile-top-controls-h) - var(--mobile-bottom-reserve) - 56px - (12 * var(--tile-gap))) / 13)
+    ) !important;
+  }
+
+  #mobilePrimaryActions.mobile-primary-actions,
+  #mobileBottomBar #mobilePrimaryActions.mobile-primary-actions,
+  .mobile-primary-actions {
+    height: 40px !important;
+    gap: 4px !important;
+  }
+
+  #mobilePrimaryActions .mobile-primary-btn,
+  #mobileBottomBar #mobilePrimaryActions .mobile-primary-btn,
+  .mobile-primary-actions .mobile-primary-btn {
+    min-height: 40px !important;
+    height: 40px !important;
+    font-size: 0.32rem !important;
+    border-radius: 6px !important;
+  }
+
+  #mobilePrimaryActions .mobile-primary-icon,
+  .mobile-primary-actions .mobile-primary-icon {
+    font-size: 0.84rem !important;
+  }
+
+  #mobileFlyoutStack.mobile-flyout-stack,
+  #mobileBottomBar #mobileFlyoutStack.mobile-flyout-stack,
+  #mobileFlyoutStack {
+    top: calc(var(--mobile-safe-top) + 45px) !important;
+    height: 34px !important;
+    gap: 4px !important;
+  }
+
+  #mobileFlyoutStack .mobile-flyout-tab,
+  #mobileBottomBar #mobileFlyoutStack .mobile-flyout-tab,
+  .mobile-flyout-tab {
+    height: 34px !important;
+    min-height: 34px !important;
+  }
+
+  #mobileFlyoutStack .mobile-flyout-label,
+  .mobile-flyout-label {
+    font-size: 0.58rem !important;
+  }
+
+  #mobileBottomBar.mobile-bottom-bar,
+  #mobileBottomBar {
+    padding: 7px !important;
+  }
+
+  #mobileBottomBar .mobile-active-skills-card,
+  .mobile-active-skills-card {
+    min-height: 96px !important;
+    padding-top: 31px !important;
+  }
+
+  #mobileBottomBar .mobile-ability-btn,
+  #mobileBottomBar .mobile-bottom-btn,
+  #mobileAbilityBtn1,
+  #mobileAbilityBtn2,
+  #mobileAbilityBtn3,
+  #mobileAbilityBtn4 {
+    min-height: 56px !important;
+    height: 56px !important;
+    font-size: 0.5rem !important;
+  }
+
+  #mobileBottomBar .ability-name,
+  #mobileBottomBar .ability-meta {
+    font-size: 0.5rem !important;
+  }
+}
+
+/* v46.9.1.306r: keep the top mobile command menu outside the bottom hero dock so it is not clipped. */
+@media (max-width: 1024px) and (orientation: portrait) {
+  #mobileTopControls.mobile-top-controls,
+  .mobile-top-controls {
+    position: static !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: none !important;
+    z-index: 6900 !important;
+  }
+
+  #mobileTopControls #mobilePrimaryActions.mobile-primary-actions,
+  #mobileTopControls #mobileFlyoutStack.mobile-flyout-stack {
+    pointer-events: auto !important;
+  }
+
+  #mobilePrimaryActions.mobile-primary-actions,
+  .mobile-primary-actions {
+    position: fixed !important;
+    top: calc(var(--mobile-safe-top) + 0px) !important;
+    left: var(--mobile-safe-left) !important;
+    right: var(--mobile-safe-right) !important;
+    width: auto !important;
+    z-index: 6900 !important;
+  }
+
+  #mobileFlyoutStack.mobile-flyout-stack,
+  #mobileFlyoutStack {
+    position: fixed !important;
+    top: calc(var(--mobile-safe-top) + 48px) !important;
+    left: var(--mobile-safe-left) !important;
+    right: var(--mobile-safe-right) !important;
+    width: auto !important;
+    z-index: 6890 !important;
+  }
+
+  #mobileBottomBar #mobilePrimaryActions,
+  #mobileBottomBar #mobileFlyoutStack {
+    display: none !important;
+  }
+}
+
+
+/* v46.9.1.306s: mobile top status/action menu + 7x12 centered board + full-screen How To Play. */
+@media (max-width: 1024px) and (orientation: portrait) {
+  :root {
+    --mobile-safe-top: max(8px, env(safe-area-inset-top, 0px)) !important;
+    --mobile-safe-left: max(8px, env(safe-area-inset-left, 0px)) !important;
+    --mobile-safe-right: max(8px, env(safe-area-inset-right, 0px)) !important;
+    --mobile-top-controls-h: 92px !important;
+    --mobile-bottom-reserve: 118px !important;
+    --tile-gap: 3px !important;
+    --mobile-board-left: max(8px, env(safe-area-inset-left, 0px)) !important;
+    --mobile-board-right: max(8px, env(safe-area-inset-right, 0px)) !important;
+    --tile-size: min(
+      calc((100vw - var(--mobile-board-left) - var(--mobile-board-right) - (6 * var(--tile-gap))) / 7),
+      calc((100dvh - var(--mobile-safe-top) - var(--mobile-top-controls-h) - var(--mobile-bottom-reserve) - 56px - (11 * var(--tile-gap))) / 12)
+    ) !important;
+  }
+
+  body,
+  .app-shell,
+  .main-layout,
+  .center-panel,
+  .grid-wrap {
+    overflow-x: hidden !important;
+  }
+
+  .main-layout,
+  .center-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .center-panel {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding-left: var(--mobile-board-left) !important;
+    padding-right: var(--mobile-board-right) !important;
+    padding-top: calc(var(--mobile-safe-top) + var(--mobile-top-controls-h) + 8px) !important;
+    box-sizing: border-box !important;
+  }
+
+  .grid-wrap,
+  #grid.grid,
+  .center-panel #grid.grid,
+  .grid {
+    width: calc((7 * var(--tile-size)) + (6 * var(--tile-gap))) !important;
+    max-width: calc(100vw - var(--mobile-board-left) - var(--mobile-board-right)) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    align-self: center !important;
+    box-sizing: border-box !important;
+  }
+
+  #grid.grid,
+  .center-panel #grid.grid,
+  .grid {
+    display: grid !important;
+    grid-template-columns: repeat(7, var(--tile-size)) !important;
+    grid-template-rows: repeat(12, var(--tile-size)) !important;
+    gap: var(--tile-gap) !important;
+    justify-content: center !important;
+  }
+
+  #grid.grid > .tile,
+  .grid > .tile {
+    width: var(--tile-size) !important;
+    height: var(--tile-size) !important;
+  }
+
+  #mobilePrimaryActions.mobile-primary-actions {
+    gap: 5px !important;
+    padding: 4px 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  #mobilePrimaryActions .mobile-primary-btn {
+    min-width: 0 !important;
+    height: 42px !important;
+    padding: 3px 4px !important;
+    border-radius: 7px !important;
+    font-size: 0.46rem !important;
+    line-height: 1.05 !important;
+  }
+
+  #mobilePrimaryActions .mobile-primary-btn.active {
+    box-shadow: inset 0 0 0 1px rgba(101, 255, 162, 0.55), 0 0 10px rgba(57, 255, 123, 0.14) !important;
+  }
+
+  #mobilePrimaryActions .mobile-primary-icon {
+    font-size: 0.88rem !important;
+    line-height: 1 !important;
+    margin-bottom: 1px !important;
+  }
+
+  #mobileFlyoutStack.mobile-flyout-stack {
+    top: calc(var(--mobile-safe-top) + 48px) !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 4px !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  #mobileFlyoutStack .mobile-flyout-tab {
+    height: 35px !important;
+    min-height: 35px !important;
+    border-radius: 7px !important;
+    font-size: 0.68rem !important;
+    justify-content: center !important;
+  }
+
+  #seerIntroModal.how-to-play-active:not(.hidden) {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: calc(var(--mobile-safe-top) + 10px) 10px calc(env(safe-area-inset-bottom, 0px) + 10px) !important;
+    background: rgba(3, 3, 8, 0.78) !important;
+    z-index: 60000 !important;
+  }
+
+  #seerIntroModal.how-to-play-active:not(.hidden) .seer-intro-modal-card {
+    width: min(392px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 24px) !important;
+    height: min(86dvh, 720px) !important;
+    max-height: calc(100dvh - var(--mobile-safe-top) - env(safe-area-inset-bottom, 0px) - 24px) !important;
+    margin: auto !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+  }
+
+  #seerIntroModal.how-to-play-active:not(.hidden) .seer-intro-header {
+    padding: 12px 14px 8px !important;
+  }
+
+  #seerIntroModal.how-to-play-active:not(.hidden) .seer-intro-title {
+    font-size: 1rem !important;
+  }
+
+  #seerIntroModal.how-to-play-active:not(.hidden) .seer-intro-body {
+    padding: 10px 12px !important;
+    font-size: 0.68rem !important;
+    line-height: 1.32 !important;
+  }
+
+  #seerIntroModal.how-to-play-active:not(.hidden) .intro-section-card {
+    padding: 9px 10px !important;
+    margin-bottom: 10px !important;
+    border-radius: 8px !important;
+  }
+
+  #seerIntroModal.how-to-play-active:not(.hidden) .seer-intro-footer {
+    padding: 10px 12px 12px !important;
+  }
+
+  #seerIntroModal.how-to-play-active:not(.hidden) #seerIntroOkBtn {
+    width: 100% !important;
+    min-height: 42px !important;
   }
 }
