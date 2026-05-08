@@ -14704,3 +14704,161 @@ body::after {
     height: 52px !important;
   }
 }
+
+/* v46.9.1.306v: bottom hero health gets its own full-width row, and top tab row gains gold. */
+@media (max-width: 1024px) and (orientation: portrait) {
+  #mobileFlyoutStack.mobile-flyout-stack,
+  #mobileFlyoutStack {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  #mobileFlyoutStack .mobile-gold-tab,
+  .mobile-gold-tab {
+    cursor: default !important;
+    pointer-events: none !important;
+    user-select: none !important;
+    gap: 3px !important;
+  }
+
+  #mobileFlyoutStack .mobile-gold-tab .mobile-flyout-label,
+  .mobile-gold-tab .mobile-flyout-label {
+    font-size: 0.58rem !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  #mobileFlyoutStack .mobile-gold-tab .mobile-flyout-chevron,
+  .mobile-gold-tab .mobile-flyout-chevron {
+    color: #ffe884 !important;
+    font-size: 0.58rem !important;
+    font-weight: 950 !important;
+  }
+
+  #mobileBottomBar.mobile-bottom-bar,
+  #mobileBottomBar {
+    max-height: calc(var(--mobile-bottom-reserve, 128px) + 18px) !important;
+  }
+
+  #mobileBottomBar .mobile-active-skills-card,
+  .mobile-active-skills-card {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto auto !important;
+    gap: 6px !important;
+    min-height: 112px !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  #mobileBottomBar .mobile-hero-quick-select,
+  .mobile-hero-quick-select {
+    order: 1 !important;
+  }
+
+  #mobileBottomBar .mobile-hero-health-slot,
+  .mobile-hero-health-slot {
+    order: 2 !important;
+    display: none !important;
+    width: 100% !important;
+    min-height: 15px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #mobileBottomBar .mobile-hero-health-slot.has-health,
+  .mobile-hero-health-slot.has-health {
+    display: block !important;
+  }
+
+  #mobileBottomBar .mobile-active-skills-grid,
+  .mobile-active-skills-grid {
+    order: 3 !important;
+  }
+
+  #mobileBottomBar .mobile-hero-health-slot .mobile-hero-bars,
+  .mobile-hero-health-slot .mobile-hero-bars,
+  #mobileBottomBar .mobile-hero-bars {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+  }
+
+  #mobileBottomBar .mobile-hero-health-slot .mobile-hero-bar-row,
+  .mobile-hero-health-slot .mobile-hero-bar-row {
+    display: grid !important;
+    grid-template-columns: 24px minmax(0, 1fr) 66px !important;
+    align-items: center !important;
+    gap: 5px !important;
+    width: 100% !important;
+  }
+
+  #mobileBottomBar .mobile-hero-health-slot .mobile-hero-bar-label,
+  #mobileBottomBar .mobile-hero-health-slot .mobile-hero-bar-value,
+  .mobile-hero-health-slot .mobile-hero-bar-label,
+  .mobile-hero-health-slot .mobile-hero-bar-value {
+    color: #f0fff4 !important;
+    font-size: 0.50rem !important;
+    font-weight: 950 !important;
+    line-height: 1 !important;
+    text-transform: uppercase !important;
+  }
+
+  #mobileBottomBar .mobile-hero-health-slot .mobile-hero-bar-value,
+  .mobile-hero-health-slot .mobile-hero-bar-value {
+    text-align: right !important;
+  }
+
+  #mobileBottomBar .mobile-hero-health-slot .mobile-hero-bar,
+  .mobile-hero-health-slot .mobile-hero-bar {
+    display: block !important;
+    width: 100% !important;
+    height: 13px !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(145, 255, 169, 0.75) !important;
+    background: rgba(5, 18, 11, 0.9) !important;
+    overflow: hidden !important;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.5) !important;
+  }
+
+  #mobileBottomBar .mobile-hero-health-slot .mobile-hero-bar-fill.hp,
+  .mobile-hero-health-slot .mobile-hero-bar-fill.hp {
+    display: block !important;
+    height: 100% !important;
+    border-radius: inherit !important;
+    background: linear-gradient(90deg, #26b950, #86f063) !important;
+  }
+
+  #mobileBottomBar .mobile-ability-btn .mobile-hero-bars,
+  #mobileBottomBar .mobile-btn-copy .mobile-hero-bars {
+    display: none !important;
+  }
+}
+
+
+/* v46.9.1.306w: keep story/audio controls below the fixed mobile command bar and remove duplicated gold suffix. */
+@media (max-width: 1024px) and (orientation: portrait) {
+  body.story-active #storyOverlay .story-controls,
+  #storyOverlay .story-controls {
+    top: calc(var(--mobile-safe-top, 8px) + var(--mobile-top-controls-h, 92px) + 8px) !important;
+    left: 8px !important;
+    right: 8px !important;
+    justify-content: center !important;
+    z-index: 90060 !important;
+  }
+
+  body.story-active #storyOverlay .story-text,
+  #storyOverlay .story-text {
+    padding-top: calc(var(--mobile-top-controls-h, 92px) + 72px) !important;
+  }
+
+  #mobileFlyoutStack .mobile-gold-tab .mobile-flyout-label,
+  .mobile-gold-tab .mobile-flyout-label {
+    color: #f7fbff !important;
+  }
+}

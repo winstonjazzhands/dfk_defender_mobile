@@ -446,19 +446,23 @@
   }
 
   function addLegacyProvider(provider, uuidHint) {
-    if (!provider) return;
+    if (!provider || typeof provider.request !== 'function') return;
     const info = {
       uuid: uuidHint || `legacy-${provider.isRabby ? 'rabby' : provider.isMetaMask ? 'metamask' : 'injected'}`,
       name: provider.isRabby ? 'Rabby' : (provider.isMetaMask ? 'MetaMask' : 'Injected Wallet'),
       rdns: provider.isRabby ? 'io.rabby' : (provider.isMetaMask ? 'io.metamask' : 'legacy.injected'),
       icon: '',
     };
-    const exists = state.providers.some((entry) => entry.info && entry.info.uuid === info.uuid);
+    const exists = state.providers.some((entry) => entry.provider === provider || (entry.info && detailSafeUuid(entry.info) === info.uuid));
     if (!exists) state.providers.push({ info, provider });
     if (!state.selectedProvider) {
       state.selectedProvider = provider;
       state.providerInfo = info;
     }
+  }
+
+  function detailSafeUuid(info) {
+    return info && info.uuid ? String(info.uuid) : '';
   }
 
   function collectProviders() {
@@ -472,6 +476,11 @@
     } else if (window.ethereum) {
       addLegacyProvider(window.ethereum, 'legacy-window-ethereum');
     }
+
+    // Rabby mobile can expose its provider separately from window.ethereum in some in-app browser builds.
+    // Register those aliases so the visible mobile connect button has a real provider to call.
+    if (window.rabby) addLegacyProvider(window.rabby, 'legacy-window-rabby');
+    if (window.RabbyWalletProvider) addLegacyProvider(window.RabbyWalletProvider, 'legacy-rabby-provider');
 
     window.dispatchEvent(new Event('eip6963:requestProvider'));
     setTimeout(render, 250);
@@ -494,12 +503,45 @@
     return provider.request({ method, params });
   }
 
-  async function ensureChain(provider) {
+  async function switchToChain(provider, config) {
+    if (!provider || !config) return false;
+    try {
+      await request(provider, 'wallet_switchEthereumChain', [{ chainId: config.chainHex }]);
+      applyActiveChainConfig(config);
+      return true;
+    } catch (switchError) {
+      const code = Number(switchError && switchError.code);
+      if (code !== 4902 && code !== -32603) throw switchError;
+      await request(provider, 'wallet_addEthereumChain', [{
+        chainId: config.chainHex,
+        chainName: config.chainName,
+        nativeCurrency: config.nativeCurrency,
+        rpcUrls: config.rpcUrls,
+        blockExplorerUrls: config.blockExplorerUrls,
+      }]);
+      await request(provider, 'wallet_switchEthereumChain', [{ chainId: config.chainHex }]);
+      applyActiveChainConfig(config);
+      return true;
+    }
+  }
+
+  async function ensureChain(provider, options = {}) {
     const chainIdHex = await request(provider, 'eth_chainId');
     const supported = getSupportedChainConfigByHex(chainIdHex);
     if (supported) {
       applyActiveChainConfig(supported);
       return true;
+    }
+    if (options && options.trySwitch) {
+      try {
+        return await switchToChain(provider, DFK_CONFIG);
+      } catch (_dfkError) {
+        try {
+          return await switchToChain(provider, AVAX_CONFIG);
+        } catch (_avaxError) {
+          // fall through to a clear user-facing error below
+        }
+      }
     }
     throw new Error('Switch your wallet to DFK Chain or Avalanche C-Chain and try again.');
   }
@@ -549,9 +591,10 @@
     if (!chosen) throw new Error('No supported wallet found. Refresh the page and make sure MetaMask or Rabby is enabled for this site.');
     state.selectedProvider = chosen.provider;
     state.providerInfo = chosen.info;
-    await ensureChain(chosen.provider);
+    // Request accounts first. Rabby mobile can reject chain calls before the site has account permission.
     const accounts = await request(chosen.provider, 'eth_requestAccounts');
     state.address = accounts && accounts[0] ? accounts[0] : null;
+    await ensureChain(chosen.provider, { trySwitch: true });
     bindProviderEvents(chosen.provider);
     render();
     emitWalletState();

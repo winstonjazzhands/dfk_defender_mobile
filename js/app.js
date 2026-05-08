@@ -11442,6 +11442,8 @@ function canSubmitRewardClaims() {
     if (els.mobilePortalHp) els.mobilePortalHp.textContent = portalText;
     if (els.jewelCount) els.jewelCount.textContent = goldText;
     if (els.mobileGoldCount) els.mobileGoldCount.textContent = goldText;
+    const mobileGoldTabValue = document.getElementById('mobileGoldTabValue');
+    if (mobileGoldTabValue) mobileGoldTabValue.textContent = `${formatJewel(game.jewel)}`;
     if (els.waveCount) els.waveCount.textContent = `${game.waveNumber}`;
     if ((game.championRoster || []).length && game.lastChampionPanelWaveRendered !== Number(game.waveNumber || 0)) renderChampionPanel();
     if (els.patternLabel) {
@@ -13081,8 +13083,13 @@ function canSubmitRewardClaims() {
     const hpPct = tower ? Math.max(0, Math.min(100, (hpNow / hpMax) * 100)) : 0;
     const basicRatio = tower && Number(tower.basicCooldown || 0) > 0 ? Math.max(0, Math.min(100, (1 - clamp(Number(tower.attackCooldownMs || 0) / Number(tower.basicCooldown || 1), 0, 1)) * 100)) : 0;
     const heroBarMeta = tower
-      ? `<span class="mobile-hero-bars" aria-label="${escapeHtml(tower.name || tower.type)} health and attack charge"><span class="mobile-hero-bar-row"><span class="mobile-hero-bar-label">HP</span><span class="mobile-hero-bar"><span class="mobile-hero-bar-fill hp" style="width:${hpPct.toFixed(1)}%"></span></span><span class="mobile-hero-bar-value">${hpNow}/${hpMax}</span></span><span class="mobile-hero-bar-row"><span class="mobile-hero-bar-label">MP</span><span class="mobile-hero-bar"><span class="mobile-hero-bar-fill mp" style="width:${basicRatio.toFixed(1)}%"></span></span><span class="mobile-hero-bar-value">${basicRatio >= 99 ? 'Ready' : `${basicRatio.toFixed(0)}%`}</span></span></span>`
+      ? `<span class="mobile-hero-bars" aria-label="${escapeHtml(tower.name || tower.type)} health"><span class="mobile-hero-bar-row"><span class="mobile-hero-bar-label">HP</span><span class="mobile-hero-bar"><span class="mobile-hero-bar-fill hp" style="width:${hpPct.toFixed(1)}%"></span></span><span class="mobile-hero-bar-value">${hpNow}/${hpMax}</span></span></span>`
       : '';
+    const mobileHeroHealthSlot = document.getElementById('mobileHeroHealthSlot');
+    if (mobileHeroHealthSlot) {
+      mobileHeroHealthSlot.innerHTML = heroBarMeta;
+      mobileHeroHealthSlot.classList.toggle('has-health', !!tower);
+    }
     const abilities = tower ? tower.abilities.filter(ability => !ability.passive).slice(0, 3) : [];
     abilityButtons.forEach((btn, index) => {
       if (!btn) return;
@@ -13101,7 +13108,7 @@ function canSubmitRewardClaims() {
       const unlockLevel = getAbilityUnlockLevel(tower, ability.key);
       const disabled = locked || remain > 0 || game.phase === SETUP_PHASES.GAME_OVER || (tower.type === 'priest' && game.runningWave === false && !['swiftness'].includes(ability.key));
       const meta = locked ? `Unlocks L${unlockLevel}` : (remain > 0 ? `${remain.toFixed(1)}s` : 'Ready');
-      setMobileAbilityButtonMarkup(btn, ability.name, `${meta}${index === 0 ? heroBarMeta : ''}`, buttonArt);
+      setMobileAbilityButtonMarkup(btn, ability.name, meta, buttonArt);
       setMobileAbilityVisualState(btn, locked ? 'locked' : (remain > 0 ? 'cooldown' : 'ready'));
       btn.title = locked ? `${ability.name} unlocks at level ${unlockLevel}` : (remain > 0 ? `${ability.name} (${remain.toFixed(1)}s)` : ability.name);
       btn.disabled = disabled;
@@ -21853,7 +21860,36 @@ function canSubmitRewardClaims() {
   });
   els.mobileFuncPauseBtn?.addEventListener('click', () => els.pauseBtn?.click());
 
-  els.mobileConnectBtn?.addEventListener('click', () => els.connectWalletBtn?.click());
+  async function connectWalletFromMobileControl() {
+    if (!window.DFKDefenseWallet || typeof window.DFKDefenseWallet.connectWallet !== 'function') {
+      els.connectWalletBtn?.click();
+      return;
+    }
+    try {
+      if (els.mobileConnectBtn) {
+        els.mobileConnectBtn.disabled = true;
+        els.mobileConnectBtn.classList.add('is-live');
+      }
+      const address = await window.DFKDefenseWallet.connectWallet();
+      if (address) {
+        showBanner(`Wallet connected: ${truncateWalletAddress(address)}`, 2200);
+        if (typeof refreshWalletEconomyDetails === 'function') refreshWalletEconomyDetails();
+        render();
+      }
+    } catch (error) {
+      const message = error && error.message ? error.message : 'Wallet connection failed. Open this site in Rabby mobile browser and try again.';
+      showBanner(message, 3600);
+      console.warn('[wallet-connect-mobile]', error);
+    } finally {
+      if (els.mobileConnectBtn) {
+        els.mobileConnectBtn.disabled = false;
+        els.mobileConnectBtn.classList.remove('is-live');
+      }
+      syncMobilePrimaryActions();
+    }
+  }
+
+  els.mobileConnectBtn?.addEventListener('click', connectWalletFromMobileControl);
   els.mobileTrackingBtn?.addEventListener('click', () => {
     const canEnable = els.enableTrackingBtn && !els.enableTrackingBtn.classList.contains('hidden');
     const canDisable = els.disableTrackingBtn && !els.disableTrackingBtn.classList.contains('hidden');
@@ -21883,7 +21919,7 @@ function canSubmitRewardClaims() {
   els.mobileLevelActionBtn?.addEventListener('click', () => els.upgradeBtn?.click());
   bindMobileUpgradeHold(els.mobileLevelActionBtn);
   els.mobileCancelActionBtn?.addEventListener('click', () => cancelPendingAction());
-  els.mobileFuncConnectBtn?.addEventListener('click', () => els.connectWalletBtn?.click());
+  els.mobileFuncConnectBtn?.addEventListener('click', connectWalletFromMobileControl);
   els.mobileFuncDisconnectBtn?.addEventListener('click', () => els.disconnectWalletBtn?.click());
   els.mobileFuncEnableTrackingBtn?.addEventListener('click', () => els.enableTrackingBtn?.click());
   els.mobileFuncDisableTrackingBtn?.addEventListener('click', () => {
