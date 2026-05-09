@@ -650,6 +650,23 @@
 </div>
 </div>
 </div>
+<div aria-hidden="true" class="intro-modal hidden" id="championSkillModal">
+<div aria-labelledby="championSkillModalTitle" aria-modal="true" class="intro-modal-card champion-skill-modal-card panel" role="dialog">
+<div class="intro-modal-header">
+<div>
+<div class="intro-kicker">CHAMPION SKILLS</div>
+<h2 id="championSkillModalTitle">Champion skills</h2>
+</div>
+</div>
+<div class="intro-body">
+<div class="champion-skill-modal-body" id="championSkillModalBody"></div>
+</div>
+<div class="intro-modal-footer start-mode-modal-footer">
+<button class="small-action secondary" id="championSkillCancelBtn" type="button">Cancel</button>
+<button class="small-action" id="championSkillSelectBtn" type="button">Select</button>
+</div>
+</div>
+</div>
 <div aria-hidden="true" class="intro-modal hidden" id="championInfoModal">
 <div aria-labelledby="championInfoModalTitle" aria-modal="true" class="intro-modal-card champion-modal-card champion-info-modal-card panel" role="dialog">
 <div class="intro-modal-header champion-info-modal-header"><div class="champion-info-heading-row"><h2 id="championInfoModalTitle">Champion details</h2><span aria-label="Champion rarity bonus details" class="wallet-hero-info-icon champion-info-rarity-icon" id="championInfoRarityInfo" role="button" tabindex="0">i<span class="wallet-hero-info-tooltip" role="tooltip"><span class="wallet-hero-info-heading">Rarity Bonus Info</span><span class="wallet-hero-info-row"><span class="wallet-hero-info-name">Common</span><span class="wallet-hero-info-value">No rarity stat bonus</span></span><span class="wallet-hero-info-row wallet-hero-info-row-uncommon"><span class="wallet-hero-info-name">Uncommon</span><span class="wallet-hero-info-value">+5% damage and HP</span></span><span class="wallet-hero-info-row wallet-hero-info-row-rare"><span class="wallet-hero-info-name">Rare</span><span class="wallet-hero-info-value">+10% damage and HP</span></span><span class="wallet-hero-info-row wallet-hero-info-row-legendary"><span class="wallet-hero-info-name">Legendary</span><span class="wallet-hero-info-value">+15% damage and HP</span></span><span class="wallet-hero-info-row wallet-hero-info-row-mythic"><span class="wallet-hero-info-name">Mythic</span><span class="wallet-hero-info-value">+20% damage and HP</span></span></span></span></div></div>
@@ -818,11 +835,12 @@
 <button aria-label="Start next wave" class="mobile-floating-next-wave-btn" id="mobileFloatingNextWaveBtn" type="button">Next Wave</button>
 <div class="mobile-floating-gold-amount" id="mobileFloatingGoldAmount">Gold: <span id="mobileFloatingGoldValue">0</span></div>
 <button class="mobile-gold-satellite-btn mobile-floating-satellite-btn hidden" disabled="" id="mobileGoldSatelliteBtn" type="button">Satellite</button>
+<button class="mobile-gold-satellite-btn mobile-floating-champion-btn hidden" disabled="" id="mobileGoldChampionBtn" type="button">Champion</button>
 </div>
 <button aria-label="Close mobile menu" class="mobile-menu-overlay hidden" id="mobileMenuOverlay" type="button"></button>
 <div aria-hidden="true" class="mobile-menu-shell hidden" id="mobileMenuShell">
 <div aria-hidden="true" class="mobile-menu-card mobile-flyout-menu hidden" id="mobileFuncMenu">
-<div class="mobile-menu-title">FUNC</div>
+<div class="mobile-menu-title mobile-func-title"><span>FUNC</span><span aria-label="Build version" class="version-badge" id="versionBadge"></span></div>
 <div class="mobile-menu-actions">
 
 <button id="mobileFuncConnectBtn" type="button">Connect</button>
@@ -997,7 +1015,6 @@
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
 <script src="js/app.js?v=46.9.1.305m"></script>
 <script src="js/layout-fixes.js?v=46.9.1.305m"></script>
-<div aria-label="Build version" class="version-badge" id="versionBadge"></div>
 <div class="story-overlay hidden" id="storyOverlay">
 <div class="story-controls">
 <button class="story-skip-btn story-mute-btn" id="storyMuteBtn" type="button">Silence Music</button>

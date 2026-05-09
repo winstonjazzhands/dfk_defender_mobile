@@ -1068,6 +1068,7 @@ const BIG_ASS_SWORD_IMAGE_PATH = 'assets/big_ass_sword.png';
     mobileFloatingGoldValue: document.getElementById('mobileFloatingGoldValue'),
     mobileCornerWaveBadge: document.getElementById('mobileCornerWaveBadge'),
     mobileGoldSatelliteBtn: document.getElementById('mobileGoldSatelliteBtn'),
+    mobileGoldChampionBtn: document.getElementById('mobileGoldChampionBtn'),
     mobilePortalHp: document.getElementById('mobilePortalHp'),
     waveCount: document.getElementById('waveCount'),
     patternLabel: document.getElementById('patternLabel'),
@@ -1311,6 +1312,10 @@ const BIG_ASS_SWORD_IMAGE_PATH = 'assets/big_ass_sword.png';
     championInfoModalBody: document.getElementById('championInfoModalBody'),
     championInfoCloseBtn: document.getElementById('championInfoCloseBtn'),
     championInfoChooseBtn: document.getElementById('championInfoChooseBtn'),
+    championSkillModal: document.getElementById('championSkillModal'),
+    championSkillModalBody: document.getElementById('championSkillModalBody'),
+    championSkillSelectBtn: document.getElementById('championSkillSelectBtn'),
+    championSkillCancelBtn: document.getElementById('championSkillCancelBtn'),
     championLockModal: document.getElementById('championLockModal'),
     championLockText: document.getElementById('championLockText'),
     championLockCancelBtn: document.getElementById('championLockCancelBtn'),
@@ -6248,7 +6253,7 @@ const DFK_GOLD_BURN_QUEUE_STORAGE_KEY = 'dfk_defender_pending_burn_saves_v1';
     const milestoneTxnPending = !!game.milestoneOfferTxnPending;
     title.textContent = heroOffer ? `Reinforcements at Wave ${heroOffer.wave}` : `Barrier Bundle at Wave ${barrierOffer.wave}`;
     if (heroOffer) {
-      sections.push(`<p>You survived long enough for help to arrive. One time offer to hire a new hero of your choice for ${useAvax ? avaxHeroLabel : `${jewelLabel} or ${honkLabel}` }.</p><p>The hired hero arrives at level ${heroOffer.heroLevel} after the payment is confirmed. After confirming the TX this pop up will disappear, click anywhere on the board to place your new hired hero. They can be moved after placement. If you forget to place them they will appear in the hero hire menu to be placed later for free.</p>`);
+      sections.push(`<p><strong>Hire one reinforcement:</strong> choose any hero below for ${useAvax ? avaxHeroLabel : `${jewelLabel} or ${honkLabel}`}. The hero arrives at level ${heroOffer.heroLevel} after payment confirms.</p><p>After the TX, this window closes. Tap the board to place the hero. If you miss it, the hero waits in the hire menu for free placement later.</p>`);
     }
     if (barrierOffer) {
       const barrierLabel = useAvax ? formatAvaxValue(AVAX_MILESTONE_BARRIER_WEI) : `${barrierOffer.burnCost.toLocaleString()} DFK Gold`;
@@ -7973,7 +7978,7 @@ function renderDamageReport() {
     log('New run started. Random obstacles are already on the field.');
     updateTopbar();
       updateMobileBoardFit();
-    if (isLandscapeMobileUi()) {
+    if (isLandscapeMobileUi() && !hasSavedMobileTileStretchSettings()) {
       window.setTimeout(() => {
         showMobileTileStretchControls();
       }, 120);
@@ -10809,8 +10814,12 @@ function canSubmitRewardClaims() {
       }
       const card = document.createElement(options.informational ? 'div' : 'button');
       if (!options.informational) card.type = 'button';
-      card.className = `champion-card${isSelected ? ' selected' : ''}${options.informational ? ' champion-info-card' : ''}`;
-      card.innerHTML = `<div class="champion-card-header"><img class="champion-card-portrait" src="${getChampionPortraitImage(hero, definition.key)}" alt="${definition.label}"><div class="champion-card-headtext"><h3>${definition.label}</h3><div class="champion-card-meta"><span class="champion-chip">${hero.chainName}</span><span class="champion-chip">Lvl ${hero.level}</span><span class="champion-chip">Hero ${hero.id}</span></div>${getChampionRarityRowMarkup(hero)}</div></div><p>${definition.summary}</p><ul>${definition.skills.map((skill) => `<li>${formatChampionSkillMarkup(skill)}</li>`).join('')}</ul>`;
+      const compactModalCard = !!options.inModal && !options.informational;
+      card.className = `champion-card${isSelected ? ' selected' : ''}${options.informational ? ' champion-info-card' : ''}${compactModalCard ? ' champion-card-mobile-pick' : ''}`;
+      const summaryMarkup = compactModalCard
+        ? `<p class="champion-card-summary-mobile">${escapeHtml(definition.summary || '')}</p><div class="champion-card-tap-hint">Tap for skills</div>`
+        : `<p>${escapeHtml(definition.summary || '')}</p><ul>${definition.skills.map((skill) => `<li>${formatChampionSkillMarkup(skill)}</li>`).join('')}</ul>`;
+      card.innerHTML = `<div class="champion-card-header"><img class="champion-card-portrait" src="${getChampionPortraitImage(hero, definition.key)}" alt="${definition.label}"><div class="champion-card-headtext"><h3>${definition.label}</h3><div class="champion-card-meta"><span class="champion-chip">${hero.chainName}</span><span class="champion-chip">Lvl ${hero.level}</span><span class="champion-chip">Hero ${hero.id}</span></div>${getChampionRarityRowMarkup(hero)}</div></div>${summaryMarkup}`;
       if (!options.informational) {
         card.addEventListener('click', (event) => {
           event.preventDefault();
@@ -10818,6 +10827,10 @@ function canSubmitRewardClaims() {
           if (game.selectedChampionConfirmed) {
             const locked = getSelectedChampionRecord();
             showBanner(locked ? `${locked.definition.label} is locked in for this run.` : 'Champion is locked in for this run.', 1800);
+            return;
+          }
+          if (compactModalCard) {
+            showChampionSkillModal(entry);
             return;
           }
           game.selectedChampionKey = entry.key;
@@ -10874,6 +10887,66 @@ function canSubmitRewardClaims() {
         activeUntil: Number(game.championActiveUntilWave || 0),
       });
     } catch (_error) {}
+  }
+
+
+  function showChampionSkillModal(entry) {
+    if (!entry || !els.championSkillModal || !els.championSkillModalBody) return false;
+    const hero = entry.hero || {};
+    const definition = entry.definition || {};
+    game.championSkillPendingKey = entry.key || '';
+    game.championSkillPendingHeroId = String(hero.id || '');
+    const title = document.getElementById('championSkillModalTitle');
+    if (title) title.textContent = `${definition.label || 'Champion'} skills`;
+    const rarityMarkup = getChampionRarityRowMarkup(hero);
+    els.championSkillModalBody.innerHTML = `
+      <div class="champion-skill-modal-summary">
+        <img class="champion-skill-modal-portrait" src="${getChampionPortraitImage(hero, definition.key)}" alt="${escapeHtml(definition.label || 'Champion')}">
+        <div class="champion-skill-modal-meta">
+          <h3>${escapeHtml(definition.label || 'Champion')}</h3>
+          <div class="champion-card-meta"><span class="champion-chip">${escapeHtml(hero.chainName || hero.chain || 'Wallet')}</span><span class="champion-chip">Lvl ${escapeHtml(String(hero.level || 1))}</span><span class="champion-chip">Hero ${escapeHtml(String(hero.id || ''))}</span></div>
+          ${rarityMarkup}
+          <p>${escapeHtml(definition.summary || '')}</p>
+        </div>
+      </div>
+      <ul class="champion-skill-modal-list">${(definition.skills || []).map((skill) => `<li>${formatChampionSkillMarkup(skill)}</li>`).join('')}</ul>`;
+    document.body.classList.add('intro-open');
+    game.introOpen = true;
+    syncStatusOverlayVisibility(true);
+    els.championSkillModal.style.zIndex = '21070';
+    els.championSkillModal.style.pointerEvents = 'auto';
+    const card = els.championSkillModal.querySelector('.intro-modal-card');
+    if (card) card.style.pointerEvents = 'auto';
+    els.championSkillModal.classList.remove('hidden');
+    els.championSkillModal.setAttribute('aria-hidden', 'false');
+    return true;
+  }
+
+  function hideChampionSkillModal() {
+    if (!els.championSkillModal) return;
+    els.championSkillModal.classList.add('hidden');
+    els.championSkillModal.setAttribute('aria-hidden', 'true');
+    game.championSkillPendingKey = '';
+    game.championSkillPendingHeroId = '';
+    syncIntroOpenClassFromVisibleModals();
+  }
+
+  function selectPendingChampionFromSkillModal() {
+    const pendingKey = String(game.championSkillPendingKey || '');
+    const pendingHeroId = String(game.championSkillPendingHeroId || '');
+    const entry = (game.championRoster || []).find((candidate) => candidate && candidate.key === pendingKey && String(candidate.hero && candidate.hero.id) === pendingHeroId);
+    if (!entry) {
+      hideChampionSkillModal();
+      showBanner('Champion selection expired. Tap the champion again.', 1800);
+      return;
+    }
+    game.selectedChampionKey = entry.key;
+    game.selectedChampionHeroId = String(entry.hero.id);
+    if (!game.selectedChampionConfirmed) game.selectedChampionSnapshot = { key: entry.key, hero: { ...entry.hero }, definition: entry.definition };
+    hideChampionSkillModal();
+    renderChampionPanel();
+    if (els.championModalBody) renderChampionCards(els.championModalBody, { inModal: true });
+    confirmSelectedChampion();
   }
 
   function showChampionInfoModal() {
@@ -12773,6 +12846,14 @@ function canSubmitRewardClaims() {
 
   let mobileTileStretchDraftSettings = null;
 
+  function hasSavedMobileTileStretchSettings() {
+    try {
+      return !!localStorage.getItem(MOBILE_TILE_CONTROL_STORAGE_KEY);
+    } catch (_error) {
+      return false;
+    }
+  }
+
   function getMobileTileStretchSettings() {
     const defaults = { widthScale: 1, heightScale: 1 };
     if (mobileTileStretchDraftSettings) return mobileTileStretchDraftSettings;
@@ -13058,6 +13139,7 @@ function canSubmitRewardClaims() {
   function updateMobileHireNotice(canHireNow) {
     const show = !!canHireNow && isLandscapeMobileUi();
     els.mobileHireMenuBtn?.classList.toggle('has-notice', show);
+    els.mobileCornerHireBtn?.classList.toggle('has-notice', show);
     els.mobileFuncMenuBtn?.classList.remove('has-notice');
     els.mobileBarToggleBtn?.classList.remove('has-notice');
     els.mobileBarToggleNotice?.classList.add('hidden');
@@ -13488,6 +13570,17 @@ function canSubmitRewardClaims() {
     return 'SATELLITE';
   }
 
+  function getMobileChampionDeployState() {
+    const selected = getSelectedChampionRecord();
+    const deployed = !!(game.championDeployedTowerId && game.towers.some((tower) => tower.id === game.championDeployedTowerId));
+    const placingChampion = !!(game.placingHeroType && String(game.placingHeroType).startsWith('champion_'));
+    const waited = getChampionWavesWaited();
+    const required = getChampionRequiredWaitWaves();
+    const ready = !!(selected && game.selectedChampionConfirmed && !deployed && waited >= required);
+    const duration = waited >= 40 ? 24 : 12;
+    return { selected, deployed, placingChampion, waited, required, ready, duration };
+  }
+
   function syncMobileQuickActions() {
     const tower = getSelectedTower();
     const preferredSatelliteTower = getPreferredSatelliteTower();
@@ -13507,6 +13600,19 @@ function canSubmitRewardClaims() {
       els.mobileGoldSatelliteBtn.title = satellitePlacementActive
         ? `Cancel ${satelliteName} placement`
         : (selectedSatelliteTower ? `Place ${satelliteName} from ${selectedSatelliteTower?.name || selectedSatelliteTower?.type}` : 'Select a hero with a satellite charge ready');
+    }
+    if (els.mobileGoldChampionBtn) {
+      const championState = getMobileChampionDeployState();
+      const showChampionBtn = championState.placingChampion || championState.ready;
+      const championName = championState.selected?.definition?.label || 'Champion';
+      els.mobileGoldChampionBtn.classList.toggle('hidden', !showChampionBtn);
+      els.mobileGoldChampionBtn.disabled = !showChampionBtn;
+      els.mobileGoldChampionBtn.classList.toggle('is-live', showChampionBtn);
+      els.mobileGoldChampionBtn.classList.toggle('is-ready', championState.ready && !championState.placingChampion);
+      els.mobileGoldChampionBtn.textContent = championState.placingChampion ? 'Cancel Champion' : `Deploy ${championName}`;
+      els.mobileGoldChampionBtn.title = championState.placingChampion
+        ? 'Cancel champion placement'
+        : `Deploy ${championName} for ${championState.duration} waves`;
     }
     if (els.mobileQuickUpgradeBtn) {
       els.mobileQuickUpgradeBtn.disabled = !tower || els.upgradeBtn.disabled;
@@ -22047,6 +22153,18 @@ function canSubmitRewardClaims() {
   els.championInfoCloseBtn?.addEventListener('click', () => {
     hideChampionInfoModal();
   });
+  els.championSkillCancelBtn?.addEventListener('click', () => {
+    hideChampionSkillModal();
+  });
+  els.championSkillSelectBtn?.addEventListener('click', () => {
+    selectPendingChampionFromSkillModal();
+  });
+  els.championSkillModal?.addEventListener('click', (event) => {
+    if (event.target === els.championSkillModal) hideChampionSkillModal();
+  });
+  els.championSkillModal?.querySelector('.intro-modal-card')?.addEventListener('click', (event) => {
+    if (typeof event.stopPropagation === 'function') event.stopPropagation();
+  });
   els.championInfoModal?.addEventListener('click', (event) => {
     if (event.target === els.championInfoModal) hideChampionInfoModal();
   });
@@ -22336,6 +22454,13 @@ function canSubmitRewardClaims() {
 
   els.mobileQuickSatelliteBtn?.addEventListener('click', requestMobileSatellitePlacement);
   els.mobileGoldSatelliteBtn?.addEventListener('click', requestMobileSatellitePlacement);
+  els.mobileGoldChampionBtn?.addEventListener('click', () => {
+    if (game.placingHeroType && String(game.placingHeroType).startsWith('champion_')) {
+      cancelPendingAction();
+      return;
+    }
+    beginChampionPlacement();
+  });
   els.mobileSatelliteActionBtn?.addEventListener('click', requestMobileSatellitePlacement);
   els.mobileInstallBtn?.addEventListener('click', handleMobileInstallAction);
   els.mobileInstallDismissBtn?.addEventListener('click', () => {
