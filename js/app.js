@@ -1066,6 +1066,7 @@ const BIG_ASS_SWORD_IMAGE_PATH = 'assets/big_ass_sword.png';
     jewelCount: document.getElementById('jewelCount'),
     mobileGoldCount: document.getElementById('mobileGoldCount'),
     mobileFloatingGoldValue: document.getElementById('mobileFloatingGoldValue'),
+    mobileCornerWaveBadge: document.getElementById('mobileCornerWaveBadge'),
     mobileGoldSatelliteBtn: document.getElementById('mobileGoldSatelliteBtn'),
     mobilePortalHp: document.getElementById('mobilePortalHp'),
     waveCount: document.getElementById('waveCount'),
@@ -1202,6 +1203,7 @@ const BIG_ASS_SWORD_IMAGE_PATH = 'assets/big_ass_sword.png';
     mobileFuncMenuBtn: document.getElementById('mobileFuncMenuBtn'),
     mobileHeroMenuBtn: document.getElementById('mobileHeroMenuBtn'),
     mobileHireMenuBtn: document.getElementById('mobileHireMenuBtn'),
+    mobileCornerHireBtn: document.getElementById('mobileCornerHireBtn'),
     mobileBarToggleBtn: document.getElementById('mobileBarToggleBtn'),
     mobileBarToggleNotice: document.getElementById('mobileBarToggleNotice'),
     mobileInstallPrompt: document.getElementById('mobileInstallPrompt'),
@@ -7971,6 +7973,11 @@ function renderDamageReport() {
     log('New run started. Random obstacles are already on the field.');
     updateTopbar();
       updateMobileBoardFit();
+    if (isLandscapeMobileUi()) {
+      window.setTimeout(() => {
+        showMobileTileStretchControls();
+      }, 120);
+    }
     showStatusOverlay();
     render();
     // removed intro modal
@@ -11456,6 +11463,7 @@ function canSubmitRewardClaims() {
     if (els.jewelCount) els.jewelCount.textContent = goldText;
     if (els.mobileGoldCount) els.mobileGoldCount.textContent = goldText;
     if (els.mobileFloatingGoldValue) els.mobileFloatingGoldValue.textContent = goldText;
+    if (els.mobileCornerWaveBadge) els.mobileCornerWaveBadge.textContent = `Wave ${Math.max(0, Number(game.waveNumber || 0))}`;
     const mobileGoldTabValue = document.getElementById('mobileGoldTabValue');
     if (mobileGoldTabValue) mobileGoldTabValue.textContent = `${formatJewel(game.jewel)}`;
     if (els.waveCount) els.waveCount.textContent = `${game.waveNumber}`;
@@ -12828,7 +12836,7 @@ function canSubmitRewardClaims() {
     panel.id = 'mobileTileStretchControls';
     panel.className = 'mobile-tile-stretch-controls hidden';
     panel.innerHTML = `
-      <div class="mobile-tile-stretch-title">Tile Stretch</div>
+      <div class="mobile-tile-stretch-title">Stretch / Squish</div>
       <div class="mobile-tile-stretch-row">
         <button type="button" data-tile-stretch="width-down">W−</button>
         <button type="button" data-tile-stretch="width-up">W+</button>
@@ -13060,6 +13068,7 @@ function canSubmitRewardClaims() {
       ['func', els.mobileFuncMenu, els.mobileFuncMenuBtn],
       ['hero', els.mobileHeroMenu, els.mobileHeroMenuBtn],
       ['hire', els.mobileHireMenu, els.mobileHireMenuBtn],
+      ['hireCorner', null, els.mobileCornerHireBtn],
     ];
     map.forEach(([, panel, btn]) => {
       panel?.classList.add('hidden');
@@ -13086,12 +13095,12 @@ function canSubmitRewardClaims() {
     const map = {
       func: [els.mobileFuncMenu, els.mobileFuncMenuBtn],
       hero: [els.mobileHeroMenu, els.mobileHeroMenuBtn],
-      hire: [els.mobileHireMenu, els.mobileHireMenuBtn],
+      hire: [els.mobileHireMenu, els.mobileHireMenuBtn, els.mobileCornerHireBtn],
     };
     closeMobileMenus();
     const pair = map[name];
     if (!pair) return;
-    const [panel, btn] = pair;
+    const [panel, btn, altBtn] = pair;
     els.mobileMenuOverlay?.classList.remove('hidden');
     els.mobileMenuShell?.classList.remove('hidden');
     els.mobileMenuShell?.setAttribute('aria-hidden', 'false');
@@ -13099,6 +13108,8 @@ function canSubmitRewardClaims() {
     panel?.setAttribute('aria-hidden', 'false');
     btn?.classList.add('active');
     btn?.setAttribute('aria-expanded', 'true');
+    altBtn?.classList.add('active');
+    altBtn?.setAttribute('aria-expanded', 'true');
     game.mobileOpenMenu = name;
   }
 
@@ -13225,7 +13236,7 @@ function canSubmitRewardClaims() {
     scope.addEventListener('click', (event) => {
       const clickedButton = event.target.closest('button');
       if (!clickedButton) return;
-      if (clickedButton.id === 'mobileFuncMenuBtn' || clickedButton.id === 'mobileHeroMenuBtn' || clickedButton.id === 'mobileHireMenuBtn') return;
+      if (clickedButton.id === 'mobileFuncMenuBtn' || clickedButton.id === 'mobileHeroMenuBtn' || clickedButton.id === 'mobileHireMenuBtn' || clickedButton.id === 'mobileCornerHireBtn') return;
       window.setTimeout(() => {
         if (isLandscapeMobileUi()) closeMobileMenus();
       }, 100);
@@ -13407,6 +13418,17 @@ function canSubmitRewardClaims() {
     return false;
   }
 
+  function getMobileLiveWaveButtonLabel() {
+    const liveCount = Math.max(0, Math.min(MAX_LIVE_WAVES, Number(getLiveWaveCount() || 0)));
+    return liveCount >= MAX_LIVE_WAVES ? `${liveCount}/${MAX_LIVE_WAVES} Live` : `Next Wave ${liveCount}/${MAX_LIVE_WAVES} Live`;
+  }
+
+  function getMobileLiveWaveButtonHtml() {
+    const liveCount = Math.max(0, Math.min(MAX_LIVE_WAVES, Number(getLiveWaveCount() || 0)));
+    if (liveCount >= MAX_LIVE_WAVES) return `${liveCount}/${MAX_LIVE_WAVES}<br/><small>Live</small>`;
+    return `Next Wave<br/><small>${liveCount}/${MAX_LIVE_WAVES} Live</small>`;
+  }
+
   function syncMobilePrimaryActions() {
     if (els.mobileTrackingBtn) {
       const trackingOn = isMobileRunTrackingOn();
@@ -13437,12 +13459,12 @@ function canSubmitRewardClaims() {
       if (els.mobileNextWaveBtn) {
         els.mobileNextWaveBtn.disabled = !canStart;
         els.mobileNextWaveBtn.classList.toggle('is-live', canStart);
-        els.mobileNextWaveBtn.innerHTML = `<span class="mobile-primary-icon" aria-hidden="true">⏭</span><span>${game.runningWave ? 'Live' : 'Next Wave'}</span>`;
+        els.mobileNextWaveBtn.innerHTML = `<span class="mobile-primary-icon" aria-hidden="true">⏭</span><span>${getMobileLiveWaveButtonHtml()}</span>`;
       }
       if (els.mobileFloatingNextWaveBtn) {
         els.mobileFloatingNextWaveBtn.disabled = !canStart;
         els.mobileFloatingNextWaveBtn.classList.toggle('is-live', canStart);
-        els.mobileFloatingNextWaveBtn.textContent = game.runningWave ? 'Live' : 'Next Wave';
+        els.mobileFloatingNextWaveBtn.textContent = getMobileLiveWaveButtonLabel();
       }
     }
     syncMobileRunSaveWarning();
@@ -13549,7 +13571,7 @@ function canSubmitRewardClaims() {
       if (els.mobileFloatingNextWaveBtn) {
         els.mobileFloatingNextWaveBtn.disabled = !canStart;
         els.mobileFloatingNextWaveBtn.classList.toggle('is-live', canStart);
-        els.mobileFloatingNextWaveBtn.textContent = game.runningWave ? 'Live' : 'Next Wave';
+        els.mobileFloatingNextWaveBtn.textContent = getMobileLiveWaveButtonLabel();
       }
     }
     syncMobileRunSaveWarning();
@@ -13877,8 +13899,8 @@ function canSubmitRewardClaims() {
     mobileHireIntro.className = 'mobile-hire-intro-card';
     const currentWave = Math.max(0, Number(game.waveNumber || 0));
     mobileHireIntro.innerHTML = currentWave >= 20
-      ? '<strong>Hero reinforcement unlocked</strong><span>Wave 20+ lets you add another hero or deploy eligible champion support. Pick a hero, then tap an open board tile to place it. You can scroll this list if more options are available.</span>'
-      : '<strong>Hire heroes</strong><span>Pick a hero, then tap an open board tile to place it. Locked or already-fielded heroes are shown as unavailable.</span>';
+      ? '<strong>Hire heroes</strong><span>Cost is shown on each button. Tap a hero, then tap an open tile.</span>'
+      : '<strong>Hire heroes</strong><span>Cost is shown on each button. Tap a hero, then tap an open tile.</span>';
     els.hirePanel.appendChild(mobileHireIntro);
 
     const pendingMilestonePlacement = game.pendingMilestoneHeroPlacement && game.pendingMilestoneHeroPlacement.heroType
@@ -13924,33 +13946,43 @@ function canSubmitRewardClaims() {
       const card = document.createElement('div');
       card.className = 'card hire-button-card';
       const btn = document.createElement('button');
+      btn.classList.add('mobile-hire-compact-btn');
       const pendingThisType = game.placingHeroType === type;
       const placedCountOfType = (game.towers || []).filter((tower) => tower && tower.type === type && tower.hp > 0 && !tower.isSatellite && !tower.isChampion).length;
       const selectedWalletHero = getSelectedWalletHeroForHire(type, usesBonus);
       const warriorNftReplacement = !usesBonus && type === 'warrior' && canUseWarriorNftReplacement() && !!selectedWalletHero;
       const effectiveCost = warriorNftReplacement ? 0 : (usesBonus ? 0 : getWalletHeroPlacementCost(type, cost, usesBonus));
+      card.dataset.heroName = t.name;
+      card.dataset.heroCost = usesBonus ? 'Free' : (warriorNftReplacement ? 'NFT / Free' : `${formatJewel(effectiveCost)} Gold`);
       const labelPrefix = usesBonus ? 'Hire Extra' : (selectedWalletHero ? 'Place NFT' : 'Hire');
       const gen0ButtonMode = getGen0HeroButtonMode(type, selectedWalletHero, usesBonus);
       const ignoreCapForType = (!usesBonus && type === 'warrior' && canAlwaysFieldOneWarrior()) || warriorNftReplacement;
       const blockedByCap = !ignoreCapForType && !usesBonus && reachedStandardHeroCap;
+      const hireButtonName = `${gen0ButtonMode ? 'Gen0 ' : ''}${t.name}`;
       btn.textContent = forceDisabled
         ? `${t.name} Hired`
         : pendingThisType
           ? `Placing… ${formatJewel(game.placingHeroCost)} Gold`
           : blockedByCap
-            ? `${labelPrefix} ${t.name} (Cap Reached)`
-            : `${labelPrefix} ${t.name}${selectedWalletHero ? ` L${selectedWalletHero.level}` : ''}${usesBonus ? ' (Free)' : ` (${formatJewel(effectiveCost)} Gold)`}`;
+            ? `${labelPrefix} ${hireButtonName} (Cap Reached)`
+            : `${labelPrefix} ${hireButtonName}${selectedWalletHero ? ` L${selectedWalletHero.level}` : ''}${usesBonus ? ' (Free)' : ` (${formatJewel(effectiveCost)} Gold)`}`;
+      if (!forceDisabled && !pendingThisType && !blockedByCap && !(pendingMilestonePlacement && pendingMilestonePlacement.heroType === type)) {
+        btn.innerHTML = '';
+        const nameLine = document.createElement('span');
+        nameLine.className = 'mobile-hire-name';
+        nameLine.textContent = `${labelPrefix} ${hireButtonName}${selectedWalletHero ? ` L${selectedWalletHero.level}` : ''}`;
+        const costLine = document.createElement('span');
+        costLine.className = 'mobile-hire-cost';
+        costLine.textContent = usesBonus ? 'Free reinforcement' : (selectedWalletHero ? (warriorNftReplacement ? 'NFT / Free' : `${formatJewel(effectiveCost)} Gold`) : `${formatJewel(effectiveCost)} Gold`);
+        btn.append(nameLine, costLine);
+      }
       btn.disabled = forceDisabled || blockedByCap || (type === 'monk' && placedCountOfType >= 2 && !pendingMilestonePlacement) || ((Number(game.jewel || 0) + 1e-9) < effectiveCost) || game.phase === SETUP_PHASES.GAME_OVER;
-      let gen0Line = null;
       if (gen0ButtonMode && !forceDisabled) {
         card.classList.add('hire-button-card-gen0');
         btn.classList.add('hire-button-gen0');
         btn.title = gen0ButtonMode === 'selected'
           ? 'Selected wallet hero is Gen0. Placing this hero unlocks the class Gen0 bonus for the run.'
           : 'Gen0 class buff is active for this class. This hire inherits the Gen0 bonus.';
-        gen0Line = document.createElement('div');
-        gen0Line.className = 'hire-button-gen0-note';
-        gen0Line.textContent = gen0ButtonMode === 'selected' ? 'GEN0 SELECTED • CLASS BUFF' : 'GEN0 ACTIVE • INHERITS BUFF';
       }
       if (pendingMilestonePlacement && pendingMilestonePlacement.heroType === type) {
         btn.textContent = pendingThisType
@@ -14018,7 +14050,6 @@ function canSubmitRewardClaims() {
           render();
         });
       }
-      if (gen0Line) card.appendChild(gen0Line);
       card.appendChild(btn);
       els.hirePanel.appendChild(card);
     }
@@ -22158,6 +22189,7 @@ function canSubmitRewardClaims() {
   els.mobileFuncMenuBtn?.addEventListener('click', () => toggleMobileMenu('func'));
   els.mobileHeroMenuBtn?.addEventListener('click', () => toggleMobileMenu('hero'));
   els.mobileHireMenuBtn?.addEventListener('click', () => toggleMobileMenu('hire'));
+  els.mobileCornerHireBtn?.addEventListener('click', () => toggleMobileMenu('hire'));
   els.mobileSideMenuToggleBtn?.addEventListener('click', toggleMobileLeftRail);
   els.mobileRightMenuToggleBtn?.addEventListener('click', toggleMobileRightRail);
   els.mobileFuncEasyBtn?.addEventListener('click', () => els.speedToggleBtn?.click());

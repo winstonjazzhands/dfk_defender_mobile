@@ -15691,3 +15691,400 @@ body::after {
     display: none !important;
   }
 }
+
+/* v46.9.1.306ac: transparent mobile corner hire button. */
+@media (max-width: 1024px) and (orientation: portrait) {
+  #mobileCornerHireBtn.mobile-corner-hire-btn {
+    position: fixed !important;
+    top: calc(var(--mobile-safe-top, 8px) + 8px) !important;
+    left: max(8px, env(safe-area-inset-left, 0px) + 8px) !important;
+    z-index: 90212 !important;
+    min-width: 52px !important;
+    min-height: 32px !important;
+    padding: 6px 10px !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    border-radius: 12px !important;
+    background: rgba(6, 12, 24, 0.18) !important;
+    color: rgba(255, 255, 255, 0.88) !important;
+    font-size: 0.72rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.03em !important;
+    text-transform: uppercase !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9) !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), 0 4px 10px rgba(0,0,0,0.18) !important;
+    backdrop-filter: blur(1px) !important;
+    -webkit-backdrop-filter: blur(1px) !important;
+  }
+
+  #mobileCornerHireBtn.mobile-corner-hire-btn:active,
+  #mobileCornerHireBtn.mobile-corner-hire-btn.active {
+    background: rgba(6, 22, 42, 0.38) !important;
+    border-color: rgba(91, 255, 145, 0.72) !important;
+    color: #ffffff !important;
+  }
+}
+
+@media (min-width: 1025px), (orientation: landscape) {
+  #mobileCornerHireBtn.mobile-corner-hire-btn {
+    display: none !important;
+  }
+}
+
+
+/* v46.9.1.306z+ compact mobile hire view: show hero + cost with fewer scrolls */
+@media (max-width: 1024px) {
+  #mobileHireMenu.mobile-menu-card {
+    width: min(96vw, 430px) !important;
+    max-height: min(70vh, 520px) !important;
+    padding: 6px !important;
+    overflow: hidden !important;
+  }
+
+  #mobileHireHost {
+    max-height: min(62vh, 470px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 0 2px 4px 0 !important;
+  }
+
+  .mobile-hire-host .hire-list,
+  #mobileHireHost .hire-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+    align-content: start !important;
+  }
+
+  .mobile-hire-intro-card {
+    grid-column: 1 / -1 !important;
+    padding: 5px 7px !important;
+    margin: 0 0 1px !important;
+    border-radius: 9px !important;
+    font-size: 0.58rem !important;
+    line-height: 1.08 !important;
+  }
+
+  .mobile-hire-intro-card strong {
+    font-size: 0.66rem !important;
+    line-height: 1 !important;
+  }
+
+  .mobile-hire-intro-card span {
+    font-size: 0.56rem !important;
+    line-height: 1.08 !important;
+  }
+
+  .mobile-hire-host .card.hire-button-card,
+  #mobileHireHost .card.hire-button-card {
+    min-height: 38px !important;
+    padding: 3px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: stretch !important;
+  }
+
+  .mobile-hire-host .card.hire-button-card button,
+  #mobileHireHost .card.hire-button-card button,
+  .mobile-hire-compact-btn {
+    width: 100% !important;
+    min-height: 34px !important;
+    padding: 4px 5px !important;
+    font-size: 0.58rem !important;
+    line-height: 1.02 !important;
+    white-space: normal !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 2px !important;
+    text-align: center !important;
+  }
+
+  .mobile-hire-name {
+    display: block !important;
+    width: 100% !important;
+    font-size: 0.60rem !important;
+    line-height: 1 !important;
+    font-weight: 900 !important;
+  }
+
+  .mobile-hire-cost {
+    display: block !important;
+    width: 100% !important;
+    font-size: 0.54rem !important;
+    line-height: 1 !important;
+    opacity: 0.95 !important;
+  }
+
+  .mobile-hire-host .hire-button-gen0-note,
+  #mobileHireHost .hire-button-gen0-note {
+    font-size: 0.44rem !important;
+    line-height: 1 !important;
+    padding: 1px 2px !important;
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 380px) and (orientation: portrait) {
+  #mobileHireMenu.mobile-menu-card {
+    width: 98vw !important;
+  }
+
+  .mobile-hire-host .hire-list,
+  #mobileHireHost .hire-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+  }
+
+  .mobile-hire-host .card.hire-button-card button,
+  #mobileHireHost .card.hire-button-card button,
+  .mobile-hire-compact-btn {
+    min-height: 32px !important;
+    font-size: 0.54rem !important;
+  }
+}
+
+/* v46.9.1.306z: keep core hero controls visible in the mobile bottom HUD. */
+@media (max-width: 1024px) and (orientation: portrait) {
+  #mobileBottomBar #mobileHeroActions.mobile-hero-actions,
+  #mobileBottomBar .mobile-hero-actions,
+  .mobile-active-skills-card .mobile-hero-actions {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    margin: -1px 0 0 !important;
+    padding: 0 !important;
+  }
+
+  #mobileBottomBar #mobileHeroActions.mobile-hero-actions.has-satellite-action,
+  #mobileBottomBar .mobile-hero-actions.has-satellite-action,
+  .mobile-active-skills-card .mobile-hero-actions.has-satellite-action {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  #mobileBottomBar .mobile-action-btn,
+  .mobile-active-skills-card .mobile-action-btn {
+    min-width: 0 !important;
+    width: 100% !important;
+    min-height: 31px !important;
+    height: 31px !important;
+    padding: 3px 4px !important;
+    border-radius: 8px !important;
+    font-size: 0.52rem !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    white-space: nowrap !important;
+  }
+
+  #mobileBottomBar .mobile-action-btn .mobile-primary-icon,
+  .mobile-active-skills-card .mobile-action-btn .mobile-primary-icon {
+    font-size: 0.58rem !important;
+    line-height: 1 !important;
+  }
+
+  #mobileBottomBar #mobileSatelliteActionBtn.hidden,
+  #mobileSatelliteActionBtn.hidden {
+    display: none !important;
+  }
+
+  #mobileBottomBar .mobile-active-skills-card,
+  .mobile-active-skills-card {
+    min-height: 140px !important;
+    gap: 6px !important;
+  }
+
+  #mobileBottomBar.mobile-bottom-bar,
+  #mobileBottomBar {
+    max-height: min(31vh, 178px) !important;
+  }
+}
+
+
+/* v46.9.1.306z: compact mobile hire Gen0 buttons match normal buttons. */
+.hire-button-gen0-note {
+  display: none !important;
+}
+.hire-button-card.hire-button-card-gen0 {
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+}
+.hire-button-card.hire-button-card-gen0 .hire-button-gen0 {
+  width: 100% !important;
+}
+@media (max-width: 1024px) {
+  .mobile-hire-host .card.hire-button-card-gen0,
+  #mobileHireHost .card.hire-button-card-gen0 {
+    min-height: 54px !important;
+    padding: 5px !important;
+  }
+  .mobile-hire-host .card.hire-button-card-gen0 .hire-button-gen0,
+  #mobileHireHost .card.hire-button-card-gen0 .hire-button-gen0 {
+    min-height: 46px !important;
+    padding: 5px 6px !important;
+  }
+}
+@media (max-width: 430px) and (orientation: portrait) {
+  .mobile-hire-host .card.hire-button-card-gen0,
+  #mobileHireHost .card.hire-button-card-gen0 {
+    min-height: 52px !important;
+  }
+  .mobile-hire-host .card.hire-button-card-gen0 .hire-button-gen0,
+  #mobileHireHost .card.hire-button-card-gen0 .hire-button-gen0 {
+    min-height: 44px !important;
+  }
+}
+
+
+/* v46.9.1.306z_whil: wave badge under transparent hire button, live-wave count in Next Wave, and bottom status placement. */
+@media (max-width: 1024px) and (orientation: portrait) {
+  #mobileCornerWaveBadge.mobile-corner-wave-badge {
+    position: fixed !important;
+    top: calc(var(--mobile-safe-top, 8px) + 43px) !important;
+    left: max(8px, env(safe-area-inset-left, 0px) + 8px) !important;
+    z-index: 90212 !important;
+    min-width: 52px !important;
+    padding: 2px 6px !important;
+    border: 1px solid rgba(255, 255, 255, 0.20) !important;
+    border-radius: 10px !important;
+    background: rgba(6, 12, 24, 0.18) !important;
+    color: rgba(255,255,255,0.9) !important;
+    font-size: 0.56rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9) !important;
+    pointer-events: none !important;
+    text-transform: uppercase !important;
+  }
+
+  #mobileFloatingNextWaveBtn.mobile-floating-next-wave-btn {
+    white-space: normal !important;
+    line-height: 1.05 !important;
+    min-height: 32px !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+
+  #mobileNextWaveBtn.mobile-primary-btn small {
+    display: block !important;
+    font-size: 0.64em !important;
+    line-height: 1 !important;
+    margin-top: 1px !important;
+  }
+
+  body.mobile-top-menu-collapsed #statusOverlay.status-overlay,
+  body.mobile-top-menu-collapsed .center-panel #statusOverlay.status-overlay,
+  body.mobile-top-menu-collapsed .status-overlay,
+  #statusOverlay.status-overlay,
+  .center-panel #statusOverlay.status-overlay {
+    position: fixed !important;
+    top: auto !important;
+    bottom: calc(var(--mobile-safe-bottom, 0px) + var(--mobile-bottom-reserve, 124px) + 8px) !important;
+    left: calc(var(--mobile-board-left, 0px) + 10px) !important;
+    right: calc(var(--mobile-board-right, 0px) + 10px) !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+    margin: 0 !important;
+    z-index: 90400 !important;
+  }
+}
+
+@media (min-width: 1025px), (orientation: landscape) {
+  #mobileCornerWaveBadge.mobile-corner-wave-badge {
+    display: none !important;
+  }
+}
+
+/* v46.9.1.306z_hire_grid_fix: keep the mobile hire offer compact enough to show all hero options with readable name/cost text. */
+@media (max-width: 1024px) and (orientation: portrait) {
+  #mobileHireMenu.mobile-menu-card {
+    width: min(96vw, 430px) !important;
+    max-height: min(74vh, 540px) !important;
+    padding: 6px !important;
+    overflow: hidden !important;
+  }
+
+  #mobileHireHost.mobile-hire-host,
+  #mobileHireHost {
+    max-height: min(68vh, 500px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 0 2px 4px 0 !important;
+  }
+
+  #mobileHireHost .hire-list,
+  .mobile-hire-host .hire-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+    align-content: start !important;
+  }
+
+  #mobileHireHost .mobile-hire-intro-card,
+  .mobile-hire-host .mobile-hire-intro-card {
+    grid-column: 1 / -1 !important;
+    padding: 5px 7px !important;
+    margin: 0 0 1px !important;
+    font-size: 0.58rem !important;
+    line-height: 1.08 !important;
+  }
+
+  #mobileHireHost .card.hire-button-card,
+  #mobileHireHost .card.hire-button-card-gen0,
+  .mobile-hire-host .card.hire-button-card,
+  .mobile-hire-host .card.hire-button-card-gen0 {
+    min-height: 38px !important;
+    height: auto !important;
+    padding: 3px !important;
+    margin: 0 !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: stretch !important;
+  }
+
+  #mobileHireHost .card.hire-button-card button,
+  #mobileHireHost .card.hire-button-card-gen0 button,
+  #mobileHireHost .mobile-hire-compact-btn,
+  .mobile-hire-host .card.hire-button-card button,
+  .mobile-hire-host .card.hire-button-card-gen0 button,
+  .mobile-hire-host .mobile-hire-compact-btn {
+    width: 100% !important;
+    min-height: 34px !important;
+    height: auto !important;
+    padding: 4px 5px !important;
+    font-size: 0.58rem !important;
+    line-height: 1.02 !important;
+    white-space: normal !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 2px !important;
+    text-align: center !important;
+  }
+
+  #mobileHireHost .mobile-hire-name,
+  .mobile-hire-host .mobile-hire-name {
+    display: block !important;
+    width: 100% !important;
+    font-size: 0.60rem !important;
+    line-height: 1 !important;
+    font-weight: 900 !important;
+  }
+
+  #mobileHireHost .mobile-hire-cost,
+  .mobile-hire-host .mobile-hire-cost {
+    display: block !important;
+    width: 100% !important;
+    font-size: 0.54rem !important;
+    line-height: 1 !important;
+    opacity: 0.95 !important;
+  }
+}
