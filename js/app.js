@@ -1214,6 +1214,7 @@ const BIG_ASS_SWORD_IMAGE_PATH = 'assets/big_ass_sword.png';
     mobileConnectBtn: document.getElementById('mobileConnectBtn'),
     mobileTrackingBtn: document.getElementById('mobileTrackingBtn'),
     mobileNextWaveBtn: document.getElementById('mobileNextWaveBtn'),
+    mobileFloatingNextWaveBtn: document.getElementById('mobileFloatingNextWaveBtn'),
     mobileAutoStartBtn: document.getElementById('mobileAutoStartBtn'),
     mobileNewRunBtn: document.getElementById('mobileNewRunBtn'),
     mobileRunManagerBtn: document.getElementById('mobileRunManagerBtn'),
@@ -11779,6 +11780,10 @@ function canSubmitRewardClaims() {
     const currentAutoLoadKey = `${String(address || '').toLowerCase()}::${Number(getConnectedWalletChainId() || 0)}`;
     if (!force && game.walletHeroAutoLoadedKey === currentAutoLoadKey) return;
     game.walletHeroLoadPending = true;
+    try {
+      if (typeof window.setMobileTopMenuCollapsed === 'function') window.setMobileTopMenuCollapsed(true);
+      else document.body.classList.add('mobile-top-menu-collapsed');
+    } catch (_error) {}
     game.walletHeroLoadError = '';
     game.walletHeroScanDoneVisibleUntil = 0;
     startWalletHeroScanRunner();
@@ -11983,6 +11988,10 @@ function canSubmitRewardClaims() {
       }
       game.walletHeroLoadPending = false;
       showWalletHeroScanDoneNotice();
+      try {
+        if (typeof window.setMobileTopMenuCollapsed === 'function') window.setMobileTopMenuCollapsed(false);
+        else document.body.classList.remove('mobile-top-menu-collapsed');
+      } catch (_error) {}
       renderWalletHeroBonusPanel();
       renderHirePanel();
       renderTransferHeroesModal();
@@ -13368,12 +13377,33 @@ function canSubmitRewardClaims() {
     }
   }
 
+  function isMobileRunTrackingOn() {
+    try {
+      const tracker = window.DFKRunTracker;
+      if (!tracker) return false;
+      if (typeof tracker.isTrackingEnabled === 'function' && tracker.isTrackingEnabled()) return true;
+      if (typeof tracker.getState === 'function') {
+        const state = tracker.getState() || {};
+        const session = state.session || null;
+        const expiresAt = session && session.expiresAt ? new Date(session.expiresAt).getTime() : 0;
+        const expired = !!(expiresAt && Date.now() >= expiresAt);
+        return !!(session && session.sessionToken && !expired);
+      }
+    } catch (_error) {}
+    return false;
+  }
+
   function syncMobilePrimaryActions() {
     if (els.mobileTrackingBtn) {
-      const disabling = els.disableTrackingBtn && !els.disableTrackingBtn.classList.contains('hidden');
-      els.mobileTrackingBtn.classList.toggle('active', !!disabling);
-      els.mobileTrackingBtn.innerHTML = disabling
-        ? '<span class="mobile-primary-icon" aria-hidden="true">⌁</span><span>Tracking<br/>ON</span>'
+      const trackingOn = isMobileRunTrackingOn();
+      els.mobileTrackingBtn.classList.toggle('active', trackingOn);
+      els.mobileTrackingBtn.classList.toggle('tracking-on', trackingOn);
+      els.mobileTrackingBtn.setAttribute('aria-pressed', trackingOn ? 'true' : 'false');
+      els.mobileTrackingBtn.title = trackingOn
+        ? 'Run tracking is on. Tap to disable run tracking.'
+        : 'Run tracking is off. Tap to enable run tracking.';
+      els.mobileTrackingBtn.innerHTML = trackingOn
+        ? '<span class="mobile-primary-icon mobile-tracking-heart" aria-hidden="true">💚</span><span>Tracking<br/>ON</span>'
         : '<span class="mobile-primary-icon" aria-hidden="true">⌁</span><span>Tracking<br/>OFF</span>';
     }
     if (els.mobileAutoStartBtn) {
@@ -13388,11 +13418,18 @@ function canSubmitRewardClaims() {
         ? '<span class="mobile-primary-icon" aria-hidden="true">🔗</span><span>Wallet<br/>Connected</span>'
         : '<span class="mobile-primary-icon" aria-hidden="true">🔗</span><span>Wallet<br/>Off</span>';
     }
-    if (els.mobileNextWaveBtn) {
+    {
       const canStart = !!els.startWaveBtn && !els.startWaveBtn.disabled && !els.startWaveBtn.classList.contains('hidden');
-      els.mobileNextWaveBtn.disabled = !canStart;
-      els.mobileNextWaveBtn.classList.toggle('is-live', canStart);
-      els.mobileNextWaveBtn.innerHTML = `<span class="mobile-primary-icon" aria-hidden="true">⏭</span><span>${game.runningWave ? 'Live' : 'Next Wave'}</span>`;
+      if (els.mobileNextWaveBtn) {
+        els.mobileNextWaveBtn.disabled = !canStart;
+        els.mobileNextWaveBtn.classList.toggle('is-live', canStart);
+        els.mobileNextWaveBtn.innerHTML = `<span class="mobile-primary-icon" aria-hidden="true">⏭</span><span>${game.runningWave ? 'Live' : 'Next Wave'}</span>`;
+      }
+      if (els.mobileFloatingNextWaveBtn) {
+        els.mobileFloatingNextWaveBtn.disabled = !canStart;
+        els.mobileFloatingNextWaveBtn.classList.toggle('is-live', canStart);
+        els.mobileFloatingNextWaveBtn.textContent = game.runningWave ? 'Live' : 'Next Wave';
+      }
     }
     syncMobileRunSaveWarning();
   }
@@ -13453,10 +13490,17 @@ function canSubmitRewardClaims() {
       els.mobileCancelActionBtn.classList.toggle('is-live', canCancelAction);
       els.mobileCancelActionBtn.title = canCancelAction ? `Cancel ${getPendingActionLabel()}` : 'No pending action to cancel';
     }
-    if (els.mobileNextWaveBtn) {
+    {
       const canStart = !!els.startWaveBtn && !els.startWaveBtn.disabled && !els.startWaveBtn.classList.contains('hidden');
-      els.mobileNextWaveBtn.disabled = !canStart;
-      els.mobileNextWaveBtn.classList.toggle('is-live', canStart);
+      if (els.mobileNextWaveBtn) {
+        els.mobileNextWaveBtn.disabled = !canStart;
+        els.mobileNextWaveBtn.classList.toggle('is-live', canStart);
+      }
+      if (els.mobileFloatingNextWaveBtn) {
+        els.mobileFloatingNextWaveBtn.disabled = !canStart;
+        els.mobileFloatingNextWaveBtn.classList.toggle('is-live', canStart);
+        els.mobileFloatingNextWaveBtn.textContent = game.runningWave ? 'Live' : 'Next Wave';
+      }
     }
     syncMobileRunSaveWarning();
 
@@ -21992,7 +22036,11 @@ function canSubmitRewardClaims() {
     updateJewelTradeUi();
     updateRelicSwapUi();
     updateWalletDependentControls();
-    window.setTimeout(updateWalletDependentControls, 0);
+    syncMobilePrimaryActions();
+    window.setTimeout(() => {
+      updateWalletDependentControls();
+      syncMobilePrimaryActions();
+    }, 0);
   });
   els.speedToggleBtn?.addEventListener('click', () => {
     setPlayMode('easy');
@@ -22101,7 +22149,7 @@ function canSubmitRewardClaims() {
 
   async function requestRunTrackingFromMobileControl() {
     const tracker = window.DFKRunTracker;
-    const trackingOn = !!(tracker && typeof tracker.isTrackingEnabled === 'function' && tracker.isTrackingEnabled());
+    const trackingOn = isMobileRunTrackingOn();
     if (trackingOn) {
       if (!window.confirm('Are you sure you want to disable run tracking? Runs played while tracking is disabled will not be submitted as tracked runs.')) return;
       if (tracker && typeof tracker.disableTracking === 'function') {
@@ -22145,6 +22193,7 @@ function canSubmitRewardClaims() {
 
   els.mobileTrackingBtn?.addEventListener('click', () => { requestRunTrackingFromMobileControl().catch(() => {}); });
   els.mobileNextWaveBtn?.addEventListener('click', () => els.startWaveBtn?.click());
+  els.mobileFloatingNextWaveBtn?.addEventListener('click', () => els.startWaveBtn?.click());
   els.mobileAutoStartBtn?.addEventListener('click', () => els.autoStartBtn?.click());
   els.mobileNewRunBtn?.addEventListener('click', () => els.restartBtn?.click());
   els.mobileRunManagerBtn?.addEventListener('click', () => {
@@ -23280,6 +23329,8 @@ document.addEventListener('DOMContentLoaded', () => {
     shell?.setAttribute('aria-hidden', 'true');
   };
 
+  document.body.classList.add('mobile-top-menu-collapsed');
+
   const sync = () => {
     const collapsed = document.body.classList.contains('mobile-top-menu-collapsed');
     toggle.textContent = collapsed ? '⌄' : '⌃';
@@ -23288,6 +23339,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.requestAnimationFrame(() => {
       try { window.dispatchEvent(new Event('resize')); } catch (_error) {}
     });
+  };
+
+  window.syncMobileTopMenuCollapsed = sync;
+  window.setMobileTopMenuCollapsed = (collapsed) => {
+    document.body.classList.toggle('mobile-top-menu-collapsed', !!collapsed);
+    if (document.body.classList.contains('mobile-top-menu-collapsed')) closeMobileFlyouts();
+    sync();
   };
 
   toggle.addEventListener('click', (event) => {
