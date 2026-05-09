@@ -14948,3 +14948,426 @@ body::after {
     top: calc(var(--mobile-safe-top, 8px) + 84px) !important;
   }
 }
+
+/* v46.9.1.306y mobile: expose satellite placement in the bottom hero actions row. */
+@media (max-width: 900px), (pointer: coarse) {
+  .mobile-active-skills-card .mobile-hero-actions {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+  #mobileSatelliteActionBtn.has-ready-dot::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 5px;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: #78f3a4;
+    box-shadow: 0 0 8px rgba(120, 243, 164, 0.85);
+  }
+}
+
+/* v46.9.1.306z mobile: dynamic 7 x 11 board fit and compact wave-20 hire view. */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(7, var(--tile-size)) !important;
+    grid-template-rows: repeat(11, var(--tile-size)) !important;
+    width: var(--board-width) !important;
+    max-width: calc(100vw - 8px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .tile {
+    width: var(--tile-size) !important;
+    height: var(--tile-size) !important;
+  }
+
+  #mobileMenuShell.mobile-menu-shell {
+    inset: calc(var(--mobile-safe-top, 8px) + var(--mobile-top-controls-h, 92px) + 8px) 8px calc(var(--mobile-bottom-reserve, 128px) + 12px) 8px !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+  }
+
+  body.mobile-top-menu-collapsed #mobileMenuShell.mobile-menu-shell {
+    inset-top: calc(var(--mobile-safe-top, 8px) + 28px) !important;
+  }
+
+  #mobileHireMenu.mobile-menu-card {
+    width: min(100%, 460px) !important;
+    max-height: 100% !important;
+    padding: 8px !important;
+    border-radius: 14px !important;
+  }
+
+  #mobileHireMenu .mobile-menu-title {
+    margin-bottom: 6px !important;
+    font-size: 0.72rem !important;
+    line-height: 1 !important;
+  }
+
+  .mobile-hire-host .hire-list,
+  #mobileHireHost .hire-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    align-content: start !important;
+  }
+
+  .mobile-hire-intro-card {
+    grid-column: 1 / -1 !important;
+    display: grid !important;
+    gap: 3px !important;
+    margin: 0 !important;
+    padding: 8px 9px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 216, 117, 0.62) !important;
+    background: rgba(13, 24, 42, 0.92) !important;
+    color: #f9fbff !important;
+    text-align: left !important;
+    font-size: 0.68rem !important;
+    line-height: 1.18 !important;
+  }
+
+  .mobile-hire-intro-card strong {
+    display: block !important;
+    font-size: 0.76rem !important;
+    line-height: 1.05 !important;
+    color: #ffeaa0 !important;
+  }
+
+  .mobile-hire-intro-card span {
+    display: block !important;
+    color: #e5edf9 !important;
+  }
+
+  .mobile-hire-host .card.hire-button-card,
+  #mobileHireHost .card.hire-button-card {
+    min-height: 54px !important;
+    padding: 5px !important;
+    margin: 0 !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: stretch !important;
+  }
+
+  .mobile-hire-host .card.hire-button-card button,
+  #mobileHireHost .card.hire-button-card button {
+    width: 100% !important;
+    min-height: 46px !important;
+    padding: 5px 6px !important;
+    font-size: 0.70rem !important;
+    line-height: 1.12 !important;
+    white-space: normal !important;
+  }
+
+  .mobile-hire-host .hire-button-gen0-note,
+  #mobileHireHost .hire-button-gen0-note {
+    font-size: 0.52rem !important;
+    line-height: 1 !important;
+    margin-bottom: 2px !important;
+  }
+}
+
+@media (max-width: 430px) and (orientation: portrait) {
+  .mobile-hire-host .hire-list,
+  #mobileHireHost .hire-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .mobile-hire-host .card.hire-button-card,
+  #mobileHireHost .card.hire-button-card {
+    min-height: 52px !important;
+  }
+
+  .mobile-hire-host .card.hire-button-card button,
+  #mobileHireHost .card.hire-button-card button {
+    min-height: 44px !important;
+    font-size: 0.66rem !important;
+  }
+}
+@media (max-width: 1024px) {
+  body.mobile-top-menu-collapsed #mobileMenuShell.mobile-menu-shell {
+    top: calc(var(--mobile-safe-top, 8px) + 28px) !important;
+  }
+}
+
+
+/* Final 7x11 mobile board fill pass: use the viewport, not the old 14x6 reservations. */
+@media (max-width: 1024px) {
+  :root {
+    --mobile-safe-top: max(4px, env(safe-area-inset-top, 0px)) !important;
+    --mobile-safe-bottom: max(4px, env(safe-area-inset-bottom, 0px)) !important;
+    --mobile-safe-left: max(4px, env(safe-area-inset-left, 0px)) !important;
+    --mobile-safe-right: max(4px, env(safe-area-inset-right, 0px)) !important;
+    --mobile-board-left: var(--mobile-safe-left) !important;
+    --mobile-board-right: var(--mobile-safe-right) !important;
+    --tile-gap: 2px !important;
+    --tile-size: min(
+      calc((100vw - var(--mobile-safe-left) - var(--mobile-safe-right) - (6 * var(--tile-gap))) / 7),
+      calc((100dvh - var(--mobile-safe-top) - var(--mobile-safe-bottom) - (10 * var(--tile-gap))) / 11)
+    ) !important;
+    --board-width: calc((7 * var(--tile-size)) + (6 * var(--tile-gap))) !important;
+    --board-height: calc((11 * var(--tile-size)) + (10 * var(--tile-gap))) !important;
+  }
+
+  .main-layout,
+  .center-panel {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    padding-left: var(--mobile-safe-left) !important;
+    padding-right: var(--mobile-safe-right) !important;
+    padding-top: var(--mobile-safe-top) !important;
+    padding-bottom: var(--mobile-safe-bottom) !important;
+    box-sizing: border-box !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow: hidden !important;
+  }
+
+  .grid-wrap,
+  #grid.grid,
+  .center-panel #grid.grid,
+  .grid {
+    width: var(--board-width) !important;
+    min-width: var(--board-width) !important;
+    max-width: var(--board-width) !important;
+    height: var(--board-height) !important;
+    min-height: var(--board-height) !important;
+    max-height: var(--board-height) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  #grid.grid,
+  .center-panel #grid.grid,
+  .grid {
+    display: grid !important;
+    grid-template-columns: repeat(7, var(--tile-size)) !important;
+    grid-template-rows: repeat(11, var(--tile-size)) !important;
+    gap: var(--tile-gap) !important;
+    justify-content: center !important;
+    align-content: start !important;
+  }
+
+  #grid.grid > .tile,
+  .grid > .tile {
+    width: var(--tile-size) !important;
+    height: var(--tile-size) !important;
+  }
+
+  #mobileBottomBar {
+    left: 50% !important;
+    right: auto !important;
+    bottom: calc(var(--mobile-safe-bottom) + 6px) !important;
+    width: min(calc(var(--board-width) - 12px), calc(100vw - 16px)) !important;
+    transform: translateX(-50%) !important;
+  }
+}
+
+/* True mobile full-board pass: keep 7x11 tiles, make each tile as large as viewport allows. */
+@media (max-width: 1024px) {
+  html,
+  body,
+  #app,
+  .main-layout,
+  .center-panel {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  #app {
+    padding: 0 !important;
+  }
+
+  .main-layout {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .center-panel {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: var(--mobile-safe-top, 3px) var(--mobile-safe-right, 3px) var(--mobile-safe-bottom, 3px) var(--mobile-safe-left, 3px) !important;
+    min-height: calc((var(--app-vh, 1vh) * 100)) !important;
+    box-sizing: border-box !important;
+  }
+
+  #grid.grid,
+  .center-panel #grid.grid,
+  .grid {
+    width: var(--board-width) !important;
+    min-width: var(--board-width) !important;
+    max-width: var(--board-width) !important;
+    height: var(--board-height) !important;
+    min-height: var(--board-height) !important;
+    max-height: var(--board-height) !important;
+    grid-template-columns: repeat(7, var(--tile-size)) !important;
+    grid-template-rows: repeat(11, var(--tile-size)) !important;
+    gap: var(--tile-gap, 2px) !important;
+    margin: 0 auto !important;
+    transform: none !important;
+  }
+
+  #grid.grid > .tile,
+  .grid > .tile {
+    width: var(--tile-size) !important;
+    height: var(--tile-size) !important;
+  }
+
+  #mobileBottomBar {
+    width: min(calc(var(--board-width) - 10px), calc(100vw - 10px)) !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    bottom: calc(var(--mobile-safe-bottom, 3px) + 2px) !important;
+  }
+}
+
+/* Final mobile portrait-board stretch: 7 x 11 rectangular tiles. */
+@media (max-width: 1024px) {
+  :root {
+    --tile-width: var(--tile-size);
+    --tile-height: var(--tile-size);
+  }
+
+  .center-panel {
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding-left: var(--mobile-board-left, 3px) !important;
+    padding-right: var(--mobile-board-right, 3px) !important;
+    padding-top: var(--mobile-top-offset, 3px) !important;
+    padding-bottom: var(--mobile-bottom-offset, 3px) !important;
+    overflow: hidden !important;
+  }
+
+  #grid.grid,
+  .grid {
+    width: var(--board-width) !important;
+    min-width: var(--board-width) !important;
+    max-width: var(--board-width) !important;
+    height: var(--board-height) !important;
+    min-height: var(--board-height) !important;
+    max-height: var(--board-height) !important;
+    grid-template-columns: repeat(7, var(--tile-width)) !important;
+    grid-template-rows: repeat(11, var(--tile-height)) !important;
+    gap: var(--tile-gap) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    transform: none !important;
+  }
+
+  .tile,
+  .grid > .tile {
+    width: var(--tile-width) !important;
+    height: var(--tile-height) !important;
+  }
+}
+
+
+.mobile-tile-stretch-controls {
+  position: fixed;
+  right: calc(8px + env(safe-area-inset-right));
+  top: calc(36px + env(safe-area-inset-top));
+  z-index: 1300;
+  width: min(188px, calc(100vw - 16px));
+  padding: 7px;
+  border-radius: 12px;
+  border: 1px solid rgba(145, 170, 221, 0.45);
+  background: rgba(5, 12, 24, 0.78);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34);
+  color: #eaf2ff;
+  font-size: 11px;
+  pointer-events: auto;
+}
+.mobile-tile-stretch-controls.hidden {
+  display: none;
+}
+.mobile-tile-stretch-title {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  text-align: center;
+}
+.mobile-tile-stretch-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+}
+.mobile-tile-stretch-row.secondary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.mobile-tile-stretch-row.save-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.mobile-tile-stretch-controls button {
+  min-height: 26px;
+  padding: 0 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(111, 139, 189, 0.68);
+  background: linear-gradient(180deg, rgba(34, 55, 88, 0.96), rgba(16, 28, 49, 0.96));
+  color: #f0f6ff;
+  font-size: 11px;
+  font-weight: 800;
+}
+.mobile-tile-stretch-values {
+  margin: 5px 0;
+  padding: 4px 5px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #d8e6ff;
+  text-align: center;
+  line-height: 1.25;
+}
+@media (min-width: 1025px) {
+  .mobile-tile-stretch-controls {
+    display: none !important;
+  }
+}
+
+
+/* v46.9.1.306z mobile tile stretch controls fix
+   Keep the board at 7 x 11, but allow rectangular mobile tiles. */
+@media (max-width: 1024px) and (orientation: portrait) {
+  :root {
+    --mobile-board-cols: 7 !important;
+    --mobile-board-rows: 11 !important;
+    --tile-width: var(--tile-size) !important;
+    --tile-height: var(--tile-size) !important;
+    --board-width: calc(7 * var(--tile-width) + 6 * var(--tile-gap)) !important;
+    --board-height: calc(11 * var(--tile-height) + 10 * var(--tile-gap)) !important;
+  }
+
+  #grid.grid,
+  .center-panel #grid.grid,
+  .grid {
+    width: var(--board-width) !important;
+    min-width: var(--board-width) !important;
+    max-width: var(--board-width) !important;
+    height: var(--board-height) !important;
+    min-height: var(--board-height) !important;
+    max-height: var(--board-height) !important;
+    grid-template-columns: repeat(7, var(--tile-width)) !important;
+    grid-template-rows: repeat(11, var(--tile-height)) !important;
+    gap: var(--tile-gap) !important;
+    aspect-ratio: auto !important;
+  }
+
+  .grid > .tile,
+  .tile {
+    width: var(--tile-width) !important;
+    min-width: var(--tile-width) !important;
+    max-width: var(--tile-width) !important;
+    height: var(--tile-height) !important;
+    min-height: var(--tile-height) !important;
+    max-height: var(--tile-height) !important;
+    aspect-ratio: auto !important;
+  }
+}

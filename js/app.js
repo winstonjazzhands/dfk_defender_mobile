@@ -1220,6 +1220,7 @@ const BIG_ASS_SWORD_IMAGE_PATH = 'assets/big_ass_sword.png';
     mobileMoveActionBtn: document.getElementById('mobileMoveActionBtn'),
     mobileLevelActionBtn: document.getElementById('mobileLevelActionBtn'),
     mobileCancelActionBtn: document.getElementById('mobileCancelActionBtn'),
+    mobileSatelliteActionBtn: document.getElementById('mobileSatelliteActionBtn'),
     mobileRunSaveWarning: document.getElementById('mobileRunSaveWarning'),
     mobileQuickRail: document.getElementById('mobileQuickRail'),
     mobileQuickStartBtn: document.getElementById('mobileQuickStartBtn'),
@@ -1240,6 +1241,7 @@ const BIG_ASS_SWORD_IMAGE_PATH = 'assets/big_ass_sword.png';
     mobileFuncBountyBtn: document.getElementById('mobileFuncBountyBtn'),
     mobileFuncQuestsBtn: document.getElementById('mobileFuncQuestsBtn'),
     mobileFuncKnownRelicsBtn: document.getElementById('mobileFuncKnownRelicsBtn'),
+    mobileFuncStretchMenuBtn: document.getElementById('mobileFuncStretchMenuBtn'),
     mobileFuncHeroesBtn: document.getElementById('mobileFuncHeroesBtn'),
     mobileFuncStartBtn: document.getElementById('mobileFuncStartBtn'),
     mobileFuncSkipBtn: document.getElementById('mobileFuncSkipBtn'),
@@ -8092,6 +8094,7 @@ function renderDamageReport() {
       </div>
     `;
     document.body.appendChild(panel);
+    if (shouldShow) panel.classList.remove('hidden');
     panel.querySelector('#closeCrashPanelBtn').addEventListener('click', hideCrashPanel);
     panel.querySelector('#copyCrashReportBtn').addEventListener('click', copyCrashReport);
     els.crashPanel = panel;
@@ -12733,37 +12736,185 @@ function canSubmitRewardClaims() {
 
 
 
+
+
+  const MOBILE_TILE_CONTROL_STORAGE_KEY = 'dfkDefenderMobileTileStretch:v1';
+
+  let mobileTileStretchDraftSettings = null;
+
+  function getMobileTileStretchSettings() {
+    const defaults = { widthScale: 1, heightScale: 1 };
+    if (mobileTileStretchDraftSettings) return mobileTileStretchDraftSettings;
+    try {
+      const raw = localStorage.getItem(MOBILE_TILE_CONTROL_STORAGE_KEY);
+      if (!raw) return defaults;
+      const parsed = JSON.parse(raw);
+      const widthScale = Number(parsed?.widthScale);
+      const heightScale = Number(parsed?.heightScale);
+      return {
+        widthScale: Number.isFinite(widthScale) ? Math.min(1.35, Math.max(0.7, widthScale)) : defaults.widthScale,
+        heightScale: Number.isFinite(heightScale) ? Math.min(1.45, Math.max(0.7, heightScale)) : defaults.heightScale,
+      };
+    } catch (_error) {
+      return defaults;
+    }
+  }
+
+  function saveMobileTileStretchSettings(settings) {
+    const saved = {
+      widthScale: Number(settings?.widthScale || 1),
+      heightScale: Number(settings?.heightScale || 1),
+    };
+    mobileTileStretchDraftSettings = saved;
+    try {
+      localStorage.setItem(MOBILE_TILE_CONTROL_STORAGE_KEY, JSON.stringify(saved));
+    } catch (_error) {}
+  }
+
+  function setMobileTileStretchDraftSettings(settings) {
+    mobileTileStretchDraftSettings = {
+      widthScale: Number(settings?.widthScale || 1),
+      heightScale: Number(settings?.heightScale || 1),
+    };
+  }
+
+  function hideMobileTileStretchControls() {
+    document.getElementById('mobileTileStretchControls')?.classList.add('hidden');
+  }
+
+  function showMobileTileStretchControls() {
+    const panel = ensureMobileTileStretchControls({ show: true });
+    if (panel) {
+      panel.classList.remove('hidden');
+      updateMobileBoardFit();
+    }
+  }
+
+  function ensureMobileTileStretchControls(options = {}) {
+    const shouldShow = !!options.show;
+    if (!isLandscapeMobileUi()) {
+      document.getElementById('mobileTileStretchControls')?.classList.add('hidden');
+      return null;
+    }
+    let panel = document.getElementById('mobileTileStretchControls');
+    if (panel) {
+      if (shouldShow) panel.classList.remove('hidden');
+      return panel;
+    }
+    panel = document.createElement('div');
+    panel.id = 'mobileTileStretchControls';
+    panel.className = 'mobile-tile-stretch-controls hidden';
+    panel.innerHTML = `
+      <div class="mobile-tile-stretch-title">Tile Stretch</div>
+      <div class="mobile-tile-stretch-row">
+        <button type="button" data-tile-stretch="width-down">W−</button>
+        <button type="button" data-tile-stretch="width-up">W+</button>
+        <button type="button" data-tile-stretch="height-down">H−</button>
+        <button type="button" data-tile-stretch="height-up">H+</button>
+      </div>
+      <div class="mobile-tile-stretch-values" id="mobileTileStretchValues">W 1.00 · H 1.00</div>
+      <div class="mobile-tile-stretch-row secondary save-row">
+        <button type="button" data-tile-stretch="reset">Reset</button>
+        <button type="button" data-tile-stretch="save">Save</button>
+        <button type="button" data-tile-stretch="copy">Copy</button>
+      </div>
+    `;
+    document.body.appendChild(panel);
+    panel.addEventListener('click', async (event) => {
+      const btn = event.target?.closest?.('[data-tile-stretch]');
+      if (!btn) return;
+      const action = btn.getAttribute('data-tile-stretch');
+      const current = getMobileTileStretchSettings();
+      const step = 0.025;
+      const next = { ...current };
+      if (action === 'width-down') next.widthScale = Math.max(0.7, current.widthScale - step);
+      if (action === 'width-up') next.widthScale = Math.min(1.35, current.widthScale + step);
+      if (action === 'height-down') next.heightScale = Math.max(0.7, current.heightScale - step);
+      if (action === 'height-up') next.heightScale = Math.min(1.45, current.heightScale + step);
+      if (action === 'reset') {
+        next.widthScale = 1;
+        next.heightScale = 1;
+      }
+      if (action === 'copy') {
+        const data = panel.dataset.tileStretchReport || '';
+        try { await navigator.clipboard?.writeText?.(data); } catch (_error) {}
+        showBanner(data || 'Tile stretch values copied.', 2200);
+        return;
+      }
+      if (action === 'save') {
+        saveMobileTileStretchSettings(current);
+        hideMobileTileStretchControls();
+        showBanner('Tile stretch saved for this device.', 1800);
+        updateMobileBoardFit();
+        return;
+      }
+      next.widthScale = Math.round(next.widthScale * 1000) / 1000;
+      next.heightScale = Math.round(next.heightScale * 1000) / 1000;
+      setMobileTileStretchDraftSettings(next);
+      updateMobileBoardFit();
+    });
+    return panel;
+  }
+
+  function updateMobileTileStretchControlReadout(tileW, tileH, boardWidth, boardHeight, settings) {
+    const panel = document.getElementById('mobileTileStretchControls');
+    if (!panel) return;
+    const values = document.getElementById('mobileTileStretchValues');
+    const widthScale = Number(settings?.widthScale || 1);
+    const heightScale = Number(settings?.heightScale || 1);
+    const report = `mobile tile stretch: widthScale=${widthScale.toFixed(3)}, heightScale=${heightScale.toFixed(3)}, tileWidth=${Math.round(tileW)}px, tileHeight=${Math.round(tileH)}px, boardWidth=${Math.round(boardWidth)}px, boardHeight=${Math.round(boardHeight)}px`;
+    panel.dataset.tileStretchReport = report;
+    if (values) values.textContent = `W ${widthScale.toFixed(3)} · H ${heightScale.toFixed(3)} · ${Math.round(tileW)}×${Math.round(tileH)}`;
+  }
+
+
   function updateMobileBoardFit() {
     if (!isLandscapeMobileUi() || !els.grid) return;
     const root = document.documentElement;
     const vv = window.visualViewport;
-    const vw = Math.max(320, Math.round(vv ? vv.width : window.innerWidth || 0));
-    const vh = Math.max(200, Math.round(vv ? vv.height : window.innerHeight || 0));
+
+    // Use the widest real viewport signal available. On mobile emulation, visualViewport
+    // can report a smaller layout width after browser chrome/zoom calculations, which made
+    // the board stay small even though there was visible room on the sides.
+    const vw = Math.max(320, Math.round(vv?.width || 0), Math.round(window.innerWidth || 0), Math.round(document.documentElement.clientWidth || 0));
+    const vh = Math.max(200, Math.round(vv?.height || 0), Math.round(window.innerHeight || 0), Math.round(document.documentElement.clientHeight || 0));
+
     const gap = 2;
-    const safeLeft = 8;
-    const safeRight = 8;
-    const safeTop = 8;
-    const safeBottom = 8;
-    const railW = (els.mobileFlyoutStack && els.mobileFlyoutStack.offsetWidth) ? els.mobileFlyoutStack.offsetWidth : 64;
-    const boardLeft = safeLeft + railW + 10;
-    const boardRight = safeRight + 12;
+    const safeLeft = 3;
+    const safeRight = 3;
+    const safeTop = 3;
+    const safeBottom = 3;
+    const railW = 0;
+    const boardLeft = safeLeft;
+    const boardRight = safeRight;
+
     const bannerVisible = els.banner && !els.banner.classList.contains('hidden');
-    const bannerH = isLandscapeMobileUi() ? 0 : (bannerVisible ? (els.banner.offsetHeight + 10) : 0);
+    const bannerH = bannerVisible ? Math.min(18, els.banner.offsetHeight + 2) : 0;
     const bottomBarVisible = els.mobileBottomBar && getComputedStyle(els.mobileBottomBar).display !== 'none';
-    const bottomBarH = bottomBarVisible ? Math.max(46, els.mobileBottomBar.offsetHeight) : 0;
+    const bottomBarH = bottomBarVisible ? Math.min(160, Math.max(88, els.mobileBottomBar.offsetHeight || 0)) : 0;
     const statusVisible = els.statusOverlay && !els.statusOverlay.classList.contains('hidden');
-    const statusH = statusVisible ? Math.max(36, els.statusOverlay.offsetHeight) : 0;
+    const statusH = statusVisible ? Math.min(24, Math.max(16, els.statusOverlay.offsetHeight)) : 0;
+
     const topOffset = safeTop + bannerH;
-    const bottomOffset = safeBottom + 8;
-    const boardFitFudgeX = isLandscapeMobileUi() ? 28 : 16;
-    const boardFitFudgeY = isLandscapeMobileUi() ? 18 : 16;
-    const availableW = Math.max(232, vw - boardLeft - boardRight - boardFitFudgeX);
-    const availableH = Math.max(112, vh - topOffset - bottomOffset - Math.max(bottomBarH, 0) - boardFitFudgeY);
-    const sizeFromW = Math.floor((availableW - (5 * gap)) / 6);
-    const sizeFromH = Math.floor((availableH - (10 * gap)) / 11);
-    const tileSize = Math.max(22, Math.min(72, sizeFromW, sizeFromH));
-    const boardWidth = tileSize * 6 + gap * 5;
-    const boardHeight = tileSize * 11 + gap * 10;
+    const bottomOffset = safeBottom;
+
+    // Target the mockup behavior: 7 columns x 11 rows, no added tiles, with the
+    // bottom controls overlaying the board instead of stealing space from it.
+    const availableW = Math.max(260, vw - boardLeft - boardRight);
+    const availableH = Math.max(320, vh - topOffset - bottomOffset);
+
+    // Mobile portrait-style board fit: keep the board at 7 columns x 11 rows,
+    // but let tile width and tile height scale independently. This intentionally
+    // makes mobile tiles taller than they are wide so the board fills the empty
+    // vertical space instead of being clamped to square tiles.
+    const stretchSettings = getMobileTileStretchSettings();
+    const baseTileW = Math.max(28, Math.floor((availableW - (6 * gap)) / 7));
+    const baseTileH = Math.max(28, Math.floor((availableH - (10 * gap)) / 11));
+    const tileW = Math.max(24, Math.floor(baseTileW * stretchSettings.widthScale));
+    const tileH = Math.max(24, Math.floor(baseTileH * stretchSettings.heightScale));
+    const boardWidth = tileW * 7 + gap * 6;
+    const boardHeight = tileH * 11 + gap * 10;
+    const tileSize = Math.min(tileW, tileH);
 
     root.style.setProperty('--mobile-safe-left', `${safeLeft}px`);
     root.style.setProperty('--mobile-safe-right', `${safeRight}px`);
@@ -12777,10 +12928,38 @@ function canSubmitRewardClaims() {
     root.style.setProperty('--mobile-bottom-reserve', `${bottomBarH}px`);
     root.style.setProperty('--mobile-status-reserve', `0px`);
     root.style.setProperty('--mobile-status-height', `${statusH}px`);
-    root.style.setProperty('--tile-gap', `${gap}px`);
-    root.style.setProperty('--tile-size', `${tileSize}px`);
-    root.style.setProperty('--board-width', `${boardWidth}px`);
-    root.style.setProperty('--board-height', `${boardHeight}px`);
+    // These are marked !important because several older mobile CSS patches also
+    // mark square tile sizing as !important. Without the priority flag, the
+    // debug controls can update the readout while the board visually stays the same.
+    root.style.setProperty('--tile-gap', `${gap}px`, 'important');
+    root.style.setProperty('--tile-size', `${tileSize}px`, 'important');
+    root.style.setProperty('--tile-width', `${tileW}px`, 'important');
+    root.style.setProperty('--tile-height', `${tileH}px`, 'important');
+    root.style.setProperty('--board-width', `${boardWidth}px`, 'important');
+    root.style.setProperty('--board-height', `${boardHeight}px`, 'important');
+
+    // Hard-apply the calculated size to beat older CSS patches and inline/layout cache.
+    els.grid.style.setProperty('width', `${boardWidth}px`, 'important');
+    els.grid.style.setProperty('min-width', `${boardWidth}px`, 'important');
+    els.grid.style.setProperty('max-width', `${boardWidth}px`, 'important');
+    els.grid.style.setProperty('height', `${boardHeight}px`, 'important');
+    els.grid.style.setProperty('min-height', `${boardHeight}px`, 'important');
+    els.grid.style.setProperty('max-height', `${boardHeight}px`, 'important');
+    els.grid.style.setProperty('grid-template-columns', `repeat(7, ${tileW}px)`, 'important');
+    els.grid.style.setProperty('grid-template-rows', `repeat(11, ${tileH}px)`, 'important');
+    els.grid.style.setProperty('gap', `${gap}px`, 'important');
+    els.grid.style.setProperty('margin-left', 'auto', 'important');
+    els.grid.style.setProperty('margin-right', 'auto', 'important');
+
+    els.grid.querySelectorAll('.tile').forEach((tile) => {
+      tile.style.setProperty('width', `${tileW}px`, 'important');
+      tile.style.setProperty('height', `${tileH}px`, 'important');
+      tile.style.setProperty('min-width', `${tileW}px`, 'important');
+      tile.style.setProperty('min-height', `${tileH}px`, 'important');
+      tile.style.setProperty('max-width', `${tileW}px`, 'important');
+      tile.style.setProperty('max-height', `${tileH}px`, 'important');
+    });
+    updateMobileTileStretchControlReadout(tileW, tileH, boardWidth, boardHeight, stretchSettings);
   }
   function isLandscapeMobileUi() {
     return window.matchMedia('(max-width: 1024px)').matches;
@@ -13253,6 +13432,21 @@ function canSubmitRewardClaims() {
       els.mobileMoveActionBtn.disabled = !tower || els.moveBtn.disabled;
       els.mobileMoveActionBtn.classList.toggle('is-live', !!tower && !els.moveBtn.disabled);
     }
+    if (els.mobileSatelliteActionBtn) {
+      const activeSourceTower = satellitePlacementActive ? getTowerById(game.placingSatelliteSourceId) : null;
+      const displayTower = satellitePlacementActive ? activeSourceTower : preferredSatelliteTower;
+      const charges = displayTower && !displayTower.isSatellite ? (displayTower.satelliteCharges || 0) : 0;
+      const satelliteLabel = displayTower?.type === 'archer' ? 'Shadow' : (displayTower?.type === 'wizard' ? 'Soul' : (displayTower?.type === 'priest' ? 'Totem' : 'Satellite'));
+      els.mobileSatelliteActionBtn.disabled = !satellitePlacementActive && !satelliteTowerReady;
+      els.mobileSatelliteActionBtn.classList.toggle('is-live', satellitePlacementActive || satelliteTowerReady);
+      els.mobileSatelliteActionBtn.classList.toggle('has-ready-dot', satelliteTowerReady);
+      els.mobileSatelliteActionBtn.innerHTML = satellitePlacementActive
+        ? '<span class="mobile-primary-icon" aria-hidden="true">✕</span><span>Cancel Sat</span>'
+        : `<span class="mobile-primary-icon" aria-hidden="true">✦</span><span>${satelliteTowerReady ? `${satelliteLabel} ${charges}` : 'Satellite'}</span>`;
+      els.mobileSatelliteActionBtn.title = satellitePlacementActive
+        ? `Cancel ${satelliteLabel} placement`
+        : (satelliteTowerReady ? `Place ${satelliteLabel.toLowerCase()} from ${preferredSatelliteTower?.name || preferredSatelliteTower?.type}` : 'No hero has a satellite charge ready');
+    }
     if (els.mobileCancelActionBtn) {
       const canCancelAction = hasCancelablePendingAction();
       els.mobileCancelActionBtn.disabled = !canCancelAction;
@@ -13584,6 +13778,14 @@ function canSubmitRewardClaims() {
 
   function renderHirePanel() {
     els.hirePanel.innerHTML = '';
+
+    const mobileHireIntro = document.createElement('div');
+    mobileHireIntro.className = 'mobile-hire-intro-card';
+    const currentWave = Math.max(0, Number(game.waveNumber || 0));
+    mobileHireIntro.innerHTML = currentWave >= 20
+      ? '<strong>Hero reinforcement unlocked</strong><span>Wave 20+ lets you add another hero or deploy eligible champion support. Pick a hero, then tap an open board tile to place it. You can scroll this list if more options are available.</span>'
+      : '<strong>Hire heroes</strong><span>Pick a hero, then tap an open board tile to place it. Locked or already-fielded heroes are shown as unavailable.</span>';
+    els.hirePanel.appendChild(mobileHireIntro);
 
     const pendingMilestonePlacement = game.pendingMilestoneHeroPlacement && game.pendingMilestoneHeroPlacement.heroType
       ? { ...game.pendingMilestoneHeroPlacement }
@@ -21896,21 +22098,52 @@ function canSubmitRewardClaims() {
   }
 
   els.mobileConnectBtn?.addEventListener('click', connectWalletFromMobileControl);
-  els.mobileTrackingBtn?.addEventListener('click', () => {
-    const canEnable = els.enableTrackingBtn && !els.enableTrackingBtn.classList.contains('hidden');
-    const canDisable = els.disableTrackingBtn && !els.disableTrackingBtn.classList.contains('hidden');
-    if (canEnable) {
-      els.enableTrackingBtn.click();
-      return;
-    }
-    if (canDisable) {
-      if (window.confirm('Are you sure you want to disable run tracking? Runs played while tracking is disabled will not be submitted as tracked runs.')) {
-        els.disableTrackingBtn.click();
+
+  async function requestRunTrackingFromMobileControl() {
+    const tracker = window.DFKRunTracker;
+    const trackingOn = !!(tracker && typeof tracker.isTrackingEnabled === 'function' && tracker.isTrackingEnabled());
+    if (trackingOn) {
+      if (!window.confirm('Are you sure you want to disable run tracking? Runs played while tracking is disabled will not be submitted as tracked runs.')) return;
+      if (tracker && typeof tracker.disableTracking === 'function') {
+        await tracker.disableTracking();
+      } else {
+        els.disableTrackingBtn?.click();
       }
+      syncMobilePrimaryActions();
+      render();
       return;
     }
-    els.enableTrackingBtn?.click();
-  });
+    try {
+      if (els.mobileTrackingBtn) {
+        els.mobileTrackingBtn.disabled = true;
+        els.mobileTrackingBtn.classList.add('is-live');
+      }
+      if (!getConnectedWalletAddress()) {
+        await connectWalletFromMobileControl();
+      }
+      if (tracker && typeof tracker.authenticate === 'function') {
+        showBanner('Opening run tracking signature…', 1800);
+        await tracker.authenticate({ manual: true, forceRefresh: true });
+      } else {
+        els.enableTrackingBtn?.click();
+      }
+      showBanner('Run tracking enabled.', 2200);
+      syncMobilePrimaryActions();
+      render();
+    } catch (error) {
+      const message = error && error.message ? error.message : 'Run tracking was not enabled.';
+      showBanner(message, 3600);
+      console.warn('[mobile-run-tracking]', error);
+    } finally {
+      if (els.mobileTrackingBtn) {
+        els.mobileTrackingBtn.disabled = false;
+        els.mobileTrackingBtn.classList.remove('is-live');
+      }
+      syncMobilePrimaryActions();
+    }
+  }
+
+  els.mobileTrackingBtn?.addEventListener('click', () => { requestRunTrackingFromMobileControl().catch(() => {}); });
   els.mobileNextWaveBtn?.addEventListener('click', () => els.startWaveBtn?.click());
   els.mobileAutoStartBtn?.addEventListener('click', () => els.autoStartBtn?.click());
   els.mobileNewRunBtn?.addEventListener('click', () => els.restartBtn?.click());
@@ -21927,7 +22160,7 @@ function canSubmitRewardClaims() {
   els.mobileCancelActionBtn?.addEventListener('click', () => cancelPendingAction());
   els.mobileFuncConnectBtn?.addEventListener('click', connectWalletFromMobileControl);
   els.mobileFuncDisconnectBtn?.addEventListener('click', () => els.disconnectWalletBtn?.click());
-  els.mobileFuncEnableTrackingBtn?.addEventListener('click', () => els.enableTrackingBtn?.click());
+  els.mobileFuncEnableTrackingBtn?.addEventListener('click', () => { requestRunTrackingFromMobileControl().catch(() => {}); });
   els.mobileFuncDisableTrackingBtn?.addEventListener('click', () => {
     if (window.confirm('Are you sure you want to disable run tracking? Runs played while tracking is disabled will not be submitted as tracked runs.')) {
       els.disableTrackingBtn?.click();
@@ -21942,6 +22175,10 @@ function canSubmitRewardClaims() {
   els.mobileFuncBountyBtn?.addEventListener('click', () => openBountyModal());
   els.mobileFuncQuestsBtn?.addEventListener('click', () => { game.questBoardView = 'quests'; openQuestsModal(); });
   els.mobileFuncKnownRelicsBtn?.addEventListener('click', () => els.knownRelicsBtn?.click());
+  els.mobileFuncStretchMenuBtn?.addEventListener('click', () => {
+    closeMobileMenus();
+    showMobileTileStretchControls();
+  });
   els.mobileFuncStartBtn?.addEventListener('click', () => els.startWaveBtn?.click());
   els.mobileFuncSkipBtn?.addEventListener('click', () => els.skipSetupBtn?.click());
   els.mobileFuncRestartBtn?.addEventListener('click', () => els.restartBtn?.click());
@@ -21952,15 +22189,21 @@ function canSubmitRewardClaims() {
   els.mobileQuickMoveBtn?.addEventListener('click', () => els.moveBtn?.click());
   els.cancelActionBtn?.addEventListener('click', () => cancelPendingAction());
   els.mobileQuickCancelBtn?.addEventListener('click', () => cancelPendingAction());
-  els.mobileQuickSatelliteBtn?.addEventListener('click', () => {
+  function requestMobileSatellitePlacement() {
     if (game.placingSatelliteSourceId) {
       cancelSatellitePlacement();
       return;
     }
     const tower = getPreferredSatelliteTower();
-    if (!tower) return;
+    if (!tower) {
+      showBanner('No satellite charge is ready yet.', 1800);
+      return;
+    }
     beginSatellitePlacement(tower);
-  });
+  }
+
+  els.mobileQuickSatelliteBtn?.addEventListener('click', requestMobileSatellitePlacement);
+  els.mobileSatelliteActionBtn?.addEventListener('click', requestMobileSatellitePlacement);
   els.mobileInstallBtn?.addEventListener('click', handleMobileInstallAction);
   els.mobileInstallDismissBtn?.addEventListener('click', () => {
     game.mobileInstallDismissed = true;
