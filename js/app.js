@@ -540,7 +540,7 @@ function getRandomTree(){
   window.DFK_DEFENDER_FORK_VERSION = 'v46.9.1.305m';
 
   const WIDTH = 7;
-  const HEIGHT = 12;
+  const HEIGHT = 11;
   const MOBILE_PORTRAIT_FORK = true;
   let BREACH_LANES = {
     top: [],
@@ -7714,6 +7714,12 @@ function renderDamageReport() {
         tile.el.className = 'tile';
         tile.el.dataset.x = String(x);
         tile.el.dataset.y = String(y);
+        if (x === 0) {
+          const rowLabel = document.createElement('div');
+          rowLabel.className = 'row-label';
+          rowLabel.textContent = String(y + 1);
+          tile.el.appendChild(rowLabel);
+        }
         els.grid.appendChild(tile.el);
         game.grid.push(tile);
         game.tilesByKey.set(key(x, y), tile);
@@ -12754,10 +12760,10 @@ function canSubmitRewardClaims() {
     const availableW = Math.max(232, vw - boardLeft - boardRight - boardFitFudgeX);
     const availableH = Math.max(112, vh - topOffset - bottomOffset - Math.max(bottomBarH, 0) - boardFitFudgeY);
     const sizeFromW = Math.floor((availableW - (5 * gap)) / 6);
-    const sizeFromH = Math.floor((availableH - (12 * gap)) / 13);
+    const sizeFromH = Math.floor((availableH - (10 * gap)) / 11);
     const tileSize = Math.max(22, Math.min(72, sizeFromW, sizeFromH));
     const boardWidth = tileSize * 6 + gap * 5;
-    const boardHeight = tileSize * 13 + gap * 12;
+    const boardHeight = tileSize * 11 + gap * 10;
 
     root.style.setProperty('--mobile-safe-left', `${safeLeft}px`);
     root.style.setProperty('--mobile-safe-right', `${safeRight}px`);
@@ -23002,3 +23008,51 @@ document.head.appendChild(style);
 
 
 window.addEventListener('load', () => { setTimeout(() => { if (typeof window.loadSharedReplayFromUrl === 'function') window.loadSharedReplayFromUrl(); }, 250); });
+
+/* v46.9.1.306y: collapsible mobile top command menu. */
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('mobileTopMenuToggleBtn');
+  const overlay = document.getElementById('mobileMenuOverlay');
+  const shell = document.getElementById('mobileMenuShell');
+  const flyoutPanels = ['mobileFuncMenu', 'mobileHeroMenu', 'mobileHireMenu'];
+  const flyoutButtons = ['mobileFuncMenuBtn', 'mobileHeroMenuBtn', 'mobileHireMenuBtn'];
+  if (!toggle || toggle.dataset.boundTopCollapse === '1') return;
+  toggle.dataset.boundTopCollapse = '1';
+
+  const closeMobileFlyouts = () => {
+    flyoutPanels.forEach((id) => {
+      const panel = document.getElementById(id);
+      if (!panel) return;
+      panel.classList.add('hidden');
+      panel.setAttribute('aria-hidden', 'true');
+    });
+    flyoutButtons.forEach((id) => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      btn.classList.remove('active');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+    overlay?.classList.add('hidden');
+    shell?.classList.add('hidden');
+    shell?.setAttribute('aria-hidden', 'true');
+  };
+
+  const sync = () => {
+    const collapsed = document.body.classList.contains('mobile-top-menu-collapsed');
+    toggle.textContent = collapsed ? '⌄' : '⌃';
+    toggle.setAttribute('aria-pressed', collapsed ? 'true' : 'false');
+    toggle.setAttribute('aria-label', collapsed ? 'Open top menu' : 'Close top menu');
+    window.requestAnimationFrame(() => {
+      try { window.dispatchEvent(new Event('resize')); } catch (_error) {}
+    });
+  };
+
+  toggle.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    document.body.classList.toggle('mobile-top-menu-collapsed');
+    if (document.body.classList.contains('mobile-top-menu-collapsed')) closeMobileFlyouts();
+    sync();
+  });
+  sync();
+});
