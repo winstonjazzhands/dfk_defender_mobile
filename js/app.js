@@ -1065,6 +1065,8 @@ const BIG_ASS_SWORD_IMAGE_PATH = 'assets/big_ass_sword.png';
     portalHp: document.getElementById('portalHp'),
     jewelCount: document.getElementById('jewelCount'),
     mobileGoldCount: document.getElementById('mobileGoldCount'),
+    mobileFloatingGoldValue: document.getElementById('mobileFloatingGoldValue'),
+    mobileGoldSatelliteBtn: document.getElementById('mobileGoldSatelliteBtn'),
     mobilePortalHp: document.getElementById('mobilePortalHp'),
     waveCount: document.getElementById('waveCount'),
     patternLabel: document.getElementById('patternLabel'),
@@ -1223,6 +1225,7 @@ const BIG_ASS_SWORD_IMAGE_PATH = 'assets/big_ass_sword.png';
     mobileCancelActionBtn: document.getElementById('mobileCancelActionBtn'),
     mobileSatelliteActionBtn: document.getElementById('mobileSatelliteActionBtn'),
     mobileRunSaveWarning: document.getElementById('mobileRunSaveWarning'),
+    mobileHeroActions: document.getElementById('mobileHeroActions'),
     mobileQuickRail: document.getElementById('mobileQuickRail'),
     mobileQuickStartBtn: document.getElementById('mobileQuickStartBtn'),
     mobileQuickUpgradeBtn: document.getElementById('mobileQuickUpgradeBtn'),
@@ -11452,6 +11455,7 @@ function canSubmitRewardClaims() {
     if (els.mobilePortalHp) els.mobilePortalHp.textContent = portalText;
     if (els.jewelCount) els.jewelCount.textContent = goldText;
     if (els.mobileGoldCount) els.mobileGoldCount.textContent = goldText;
+    if (els.mobileFloatingGoldValue) els.mobileFloatingGoldValue.textContent = goldText;
     const mobileGoldTabValue = document.getElementById('mobileGoldTabValue');
     if (mobileGoldTabValue) mobileGoldTabValue.textContent = `${formatJewel(game.jewel)}`;
     if (els.waveCount) els.waveCount.textContent = `${game.waveNumber}`;
@@ -12191,6 +12195,9 @@ function canSubmitRewardClaims() {
       if (tower) {
         tile.el.classList.add(`tile-hero-${tower.type}`);
         if (tower.isSacrificeMonk) tile.el.classList.add('tile-sacrifice-monk', 'tile-pure-energy');
+        if (canTowerPlaceSatelliteNow(tower)) {
+          tile.el.classList.add('tile-satellite-ready');
+        }
       }
       if (activeSlowTotem) tile.el.classList.add('tile-has-slow-totem');
       const enemiesHere = game.enemies.filter(e => e.x === tile.x && e.y === tile.y).slice(0, 3);
@@ -12218,6 +12225,13 @@ function canSubmitRewardClaims() {
           rarityBadge.textContent = walletHeroRarity.shortName;
           rarityBadge.title = `${walletHeroRarity.name} wallet hero #${tower.walletHeroId}`;
           tile.el.appendChild(rarityBadge);
+        }
+
+        if (canTowerPlaceSatelliteNow(tower)) {
+          const satelliteReadyDot = document.createElement('div');
+          satelliteReadyDot.className = 'tile-satellite-ready-dot';
+          satelliteReadyDot.title = 'Satellite ready — select this hero and tap Satellite.';
+          tile.el.appendChild(satelliteReadyDot);
         }
 
         let stackedBuffBadgeCount = 0;
@@ -13434,11 +13448,44 @@ function canSubmitRewardClaims() {
     syncMobileRunSaveWarning();
   }
 
+  function getSatelliteDisplayNameForTower(tower, short = false) {
+    if (!tower) return short ? 'Sat' : 'Satellite';
+    if (tower.type === 'archer') return short ? 'Shadow' : 'Archer Shadow';
+    if (tower.type === 'wizard') return short ? 'Torn Soul' : 'Torn Soul';
+    if (tower.type === 'priest') return short ? 'Totem' : 'Blinding Light Totem';
+    if (tower.type === 'warrior') return short ? 'Statue' : 'Statue';
+    return short ? 'Sat' : 'Satellite';
+  }
+
+  function getFloatingSatelliteButtonLabel(tower) {
+    if (!tower) return 'SATELLITE';
+    if (tower.type === 'archer') return 'SHADOW';
+    if (tower.type === 'wizard') return 'TORN SOUL';
+    if (tower.type === 'priest') return 'BLINDING LIGHT';
+    if (tower.type === 'warrior') return 'STATUE';
+    return 'SATELLITE';
+  }
+
   function syncMobileQuickActions() {
     const tower = getSelectedTower();
     const preferredSatelliteTower = getPreferredSatelliteTower();
     const satellitePlacementActive = !!game.placingSatelliteSourceId;
+    const selectedSatelliteTower = tower && canTowerPlaceSatelliteNow(tower) ? tower : null;
     const satelliteTowerReady = !!preferredSatelliteTower;
+    if (els.mobileGoldSatelliteBtn) {
+      const activeSourceTower = satellitePlacementActive ? getTowerById(game.placingSatelliteSourceId) : null;
+      const displayTower = satellitePlacementActive ? activeSourceTower : selectedSatelliteTower;
+      const showGoldSatelliteBtn = !!selectedSatelliteTower || (satellitePlacementActive && !!activeSourceTower);
+      const satelliteName = getSatelliteDisplayNameForTower(displayTower, false);
+      const floatingLabel = getFloatingSatelliteButtonLabel(displayTower);
+      els.mobileGoldSatelliteBtn.classList.toggle('hidden', !showGoldSatelliteBtn);
+      els.mobileGoldSatelliteBtn.disabled = !showGoldSatelliteBtn;
+      els.mobileGoldSatelliteBtn.classList.toggle('is-live', showGoldSatelliteBtn);
+      els.mobileGoldSatelliteBtn.textContent = satellitePlacementActive ? `CANCEL ${floatingLabel}` : floatingLabel;
+      els.mobileGoldSatelliteBtn.title = satellitePlacementActive
+        ? `Cancel ${satelliteName} placement`
+        : (selectedSatelliteTower ? `Place ${satelliteName} from ${selectedSatelliteTower?.name || selectedSatelliteTower?.type}` : 'Select a hero with a satellite charge ready');
+    }
     if (els.mobileQuickUpgradeBtn) {
       els.mobileQuickUpgradeBtn.disabled = !tower || els.upgradeBtn.disabled;
       els.mobileQuickUpgradeBtn.classList.toggle('is-live', !!tower && !els.upgradeBtn.disabled);
@@ -13471,18 +13518,21 @@ function canSubmitRewardClaims() {
     }
     if (els.mobileSatelliteActionBtn) {
       const activeSourceTower = satellitePlacementActive ? getTowerById(game.placingSatelliteSourceId) : null;
-      const displayTower = satellitePlacementActive ? activeSourceTower : preferredSatelliteTower;
+      const displayTower = satellitePlacementActive ? activeSourceTower : selectedSatelliteTower;
       const charges = displayTower && !displayTower.isSatellite ? (displayTower.satelliteCharges || 0) : 0;
-      const satelliteLabel = displayTower?.type === 'archer' ? 'Shadow' : (displayTower?.type === 'wizard' ? 'Soul' : (displayTower?.type === 'priest' ? 'Totem' : 'Satellite'));
-      els.mobileSatelliteActionBtn.disabled = !satellitePlacementActive && !satelliteTowerReady;
-      els.mobileSatelliteActionBtn.classList.toggle('is-live', satellitePlacementActive || satelliteTowerReady);
-      els.mobileSatelliteActionBtn.classList.toggle('has-ready-dot', satelliteTowerReady);
+      const satelliteLabel = getSatelliteDisplayNameForTower(displayTower, true);
+      const showSatelliteAction = satellitePlacementActive || !!selectedSatelliteTower;
+      els.mobileSatelliteActionBtn.classList.toggle('hidden', !showSatelliteAction);
+      els.mobileHeroActions?.classList.toggle('has-satellite-action', showSatelliteAction);
+      els.mobileSatelliteActionBtn.disabled = !showSatelliteAction;
+      els.mobileSatelliteActionBtn.classList.toggle('is-live', showSatelliteAction);
+      els.mobileSatelliteActionBtn.classList.toggle('has-ready-dot', !!selectedSatelliteTower);
       els.mobileSatelliteActionBtn.innerHTML = satellitePlacementActive
         ? '<span class="mobile-primary-icon" aria-hidden="true">✕</span><span>Cancel Sat</span>'
-        : `<span class="mobile-primary-icon" aria-hidden="true">✦</span><span>${satelliteTowerReady ? `${satelliteLabel} ${charges}` : 'Satellite'}</span>`;
+        : `<span class="mobile-primary-icon" aria-hidden="true">✦</span><span>${showSatelliteAction ? `${satelliteLabel} ${charges}` : 'Satellite'}</span>`;
       els.mobileSatelliteActionBtn.title = satellitePlacementActive
         ? `Cancel ${satelliteLabel} placement`
-        : (satelliteTowerReady ? `Place ${satelliteLabel.toLowerCase()} from ${preferredSatelliteTower?.name || preferredSatelliteTower?.type}` : 'No hero has a satellite charge ready');
+        : (selectedSatelliteTower ? `Place ${satelliteLabel.toLowerCase()} from ${selectedSatelliteTower?.name || selectedSatelliteTower?.type}` : 'Select a hero with a satellite charge ready');
     }
     if (els.mobileCancelActionBtn) {
       const canCancelAction = hasCancelablePendingAction();
@@ -13508,7 +13558,7 @@ function canSubmitRewardClaims() {
       const activeSourceTower = satellitePlacementActive ? getTowerById(game.placingSatelliteSourceId) : null;
       const displayTower = satellitePlacementActive ? activeSourceTower : preferredSatelliteTower;
       const charges = displayTower && !displayTower.isSatellite ? (displayTower.satelliteCharges || 0) : 0;
-      const satelliteLabel = displayTower?.type === 'archer' ? 'Shadow' : (displayTower?.type === 'wizard' ? 'Soul' : (displayTower?.type === 'priest' ? 'Totem' : 'Statue'));
+      const satelliteLabel = getSatelliteDisplayNameForTower(displayTower, true);
       els.mobileQuickSatelliteBtn.disabled = !satellitePlacementActive && !satelliteTowerReady;
       els.mobileQuickSatelliteBtn.classList.toggle('is-live', satellitePlacementActive || satelliteTowerReady);
       els.mobileQuickSatelliteBtn.classList.toggle('has-ready-dot', satelliteTowerReady);
@@ -22243,7 +22293,8 @@ function canSubmitRewardClaims() {
       cancelSatellitePlacement();
       return;
     }
-    const tower = getPreferredSatelliteTower();
+    const selectedTower = getSelectedTower();
+    const tower = selectedTower && canTowerPlaceSatelliteNow(selectedTower) ? selectedTower : getPreferredSatelliteTower();
     if (!tower) {
       showBanner('No satellite charge is ready yet.', 1800);
       return;
@@ -22252,6 +22303,7 @@ function canSubmitRewardClaims() {
   }
 
   els.mobileQuickSatelliteBtn?.addEventListener('click', requestMobileSatellitePlacement);
+  els.mobileGoldSatelliteBtn?.addEventListener('click', requestMobileSatellitePlacement);
   els.mobileSatelliteActionBtn?.addEventListener('click', requestMobileSatellitePlacement);
   els.mobileInstallBtn?.addEventListener('click', handleMobileInstallAction);
   els.mobileInstallDismissBtn?.addEventListener('click', () => {

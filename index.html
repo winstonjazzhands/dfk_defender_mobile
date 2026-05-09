@@ -812,7 +812,11 @@
 </div>
 <button aria-label="Close top menu" aria-pressed="false" class="mobile-top-menu-toggle" id="mobileTopMenuToggleBtn" type="button">⌃</button>
 </div>
+<div aria-live="polite" class="mobile-floating-command-stack" id="mobileFloatingCommandStack">
 <button aria-label="Start next wave" class="mobile-floating-next-wave-btn" id="mobileFloatingNextWaveBtn" type="button">Next Wave</button>
+<div class="mobile-floating-gold-amount" id="mobileFloatingGoldAmount">Gold: <span id="mobileFloatingGoldValue">0</span></div>
+<button class="mobile-gold-satellite-btn mobile-floating-satellite-btn hidden" disabled="" id="mobileGoldSatelliteBtn" type="button">Satellite</button>
+</div>
 <button aria-label="Close mobile menu" class="mobile-menu-overlay hidden" id="mobileMenuOverlay" type="button"></button>
 <div aria-hidden="true" class="mobile-menu-shell hidden" id="mobileMenuShell">
 <div aria-hidden="true" class="mobile-menu-card mobile-flyout-menu hidden" id="mobileFuncMenu">
@@ -845,6 +849,7 @@
 <div class="mobile-quick-stat">
 <span class="mobile-quick-stat-label">Gold</span>
 <span class="mobile-quick-stat-value" id="mobileGoldCount">0</span>
+
 </div>
 <div class="mobile-quick-stat">
 <span class="mobile-quick-stat-label">Portal</span>
