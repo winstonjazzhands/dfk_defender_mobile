@@ -22932,15 +22932,78 @@ function canSubmitRewardClaims() {
     requestAnimationFrame(gameLoop);
   }
 
-  els.grid.addEventListener('click', (event) => {
+  function resolveGridTileFromPointerEvent(event) {
+    if (!els.grid) return null;
+    const point = event.changedTouches?.[0] || event.touches?.[0] || event;
+    const clientX = Number(point?.clientX);
+    const clientY = Number(point?.clientY);
+    if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) {
+      const tileEl = event.target?.closest?.('.tile');
+      if (!tileEl) return null;
+      return { x: Number(tileEl.dataset.x), y: Number(tileEl.dataset.y), source: 'target' };
+    }
+
+    const rect = els.grid.getBoundingClientRect();
+    if (!rect || rect.width <= 0 || rect.height <= 0) return null;
+    const localX = clientX - rect.left;
+    const localY = clientY - rect.top;
+    if (localX < 0 || localY < 0 || localX > rect.width || localY > rect.height) return null;
+
+    const style = window.getComputedStyle(els.grid);
+    const gapX = parseFloat(style.columnGap || style.gap || '0') || 0;
+    const gapY = parseFloat(style.rowGap || style.gap || '0') || 0;
+    const columns = 7;
+    const rows = 11;
+    const tileW = Math.max(1, (rect.width - gapX * (columns - 1)) / columns);
+    const tileH = Math.max(1, (rect.height - gapY * (rows - 1)) / rows);
+    const stepX = tileW + gapX;
+    const stepY = tileH + gapY;
+
+    let x = Math.floor(localX / stepX);
+    let y = Math.floor(localY / stepY);
+    x = Math.max(0, Math.min(columns - 1, x));
+    y = Math.max(0, Math.min(rows - 1, y));
+
+    // Wallet mobile browsers can report coordinates that land on the CSS grid gap.
+    // Treat a tap in the gap as the nearest intended tile instead of trusting the
+    // browser's hit-tested child, which is what causes offset mobile taps.
+    const inCellX = localX - x * stepX;
+    const inCellY = localY - y * stepY;
+    if (inCellX > tileW && x < columns - 1) x += (inCellX - tileW) > gapX / 2 ? 1 : 0;
+    if (inCellY > tileH && y < rows - 1) y += (inCellY - tileH) > gapY / 2 ? 1 : 0;
+
+    const tileEl = els.grid.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+    if (!tileEl) return null;
+    return { x, y, source: 'rect' };
+  }
+
+  function handleGridPointerActivation(event, reason = 'tile-click') {
     if (shouldSuppressBoardClicks()) {
       event.preventDefault();
       event.stopPropagation();
       return;
     }
-    const tileEl = event.target.closest('.tile');
-    if (!tileEl) return;
-    handleTileClick(Number(tileEl.dataset.x), Number(tileEl.dataset.y)).catch((error) => showCrashReport('tile-click', error));
+    const tile = resolveGridTileFromPointerEvent(event);
+    if (!tile) return;
+    event.preventDefault();
+    event.stopPropagation();
+    handleTileClick(tile.x, tile.y).catch((error) => showCrashReport(reason, error));
+  }
+
+  let suppressSyntheticGridClickUntil = 0;
+  els.grid.addEventListener('pointerup', (event) => {
+    if (event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
+    suppressSyntheticGridClickUntil = Date.now() + 450;
+    handleGridPointerActivation(event, 'tile-pointerup');
+  }, { passive: false });
+
+  els.grid.addEventListener('click', (event) => {
+    if (Date.now() < suppressSyntheticGridClickUntil) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    handleGridPointerActivation(event, 'tile-click');
   });
 
   // Preview portal / obstacle placements on hover.
