@@ -16517,3 +16517,43 @@ body::after {
     max-height: min(58vh, 440px);
   }
 }
+
+/* v46.9.1.306af mobile: performance mode defaults on for smoother phones. */
+.mobile-performance-mode .projectile-effect,
+.mobile-performance-mode .attack-line-layer,
+.mobile-performance-mode .tile-gen0-sparkle,
+.mobile-performance-mode .tile-archon-sparkle::before,
+.mobile-performance-mode .tile-archon-sparkle::after {
+  display: none !important;
+  animation: none !important;
+}
+
+.mobile-performance-mode .mobile-floating-champion-btn,
+.mobile-performance-mode .mobile-floating-satellite-btn,
+.mobile-performance-mode .mobile-corner-hire-btn.has-available-hire,
+.mobile-performance-mode .mobile-menu-actions button,
+.mobile-performance-mode .mobile-flyout-tab,
+.mobile-performance-mode .mobile-bottom-bar button,
+.mobile-performance-mode .mobile-ability-btn,
+.mobile-performance-mode .mobile-action-btn,
+.mobile-performance-mode .tile,
+.mobile-performance-mode .tower,
+.mobile-performance-mode .enemy {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.08s !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.mobile-performance-mode .mobile-floating-champion-btn.ready,
+.mobile-performance-mode .mobile-floating-satellite-btn.ready,
+.mobile-performance-mode .mobile-corner-hire-btn.has-available-hire {
+  box-shadow: 0 0 0 2px rgba(255, 235, 130, 0.75), 0 0 8px rgba(255, 235, 130, 0.42) !important;
+}
+
+.mobile-menu-actions #mobileFuncPerformanceBtn.is-active {
+  background: linear-gradient(180deg, rgba(64, 92, 68, 0.96), rgba(38, 62, 42, 0.98));
+  border-color: rgba(148, 255, 170, 0.7);
+  color: #f3fff3;
+}

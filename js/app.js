@@ -582,6 +582,7 @@ function getRandomTree(){
   const DAILY_QUEST_TEST_RESET_WALLET = '0x971bdacd04ef40141ddb6ba175d4f76665103c81';
   const BOUNTY_PROGRESS_TEST_RESET_WALLET = DAILY_QUEST_TEST_RESET_WALLET;
   const CHAMPION_FAST_MODE_STORAGE_KEY = 'dfk_defender_champion_fast_mode_v1';
+  const MOBILE_PERFORMANCE_MODE_STORAGE_KEY = 'dfkDefenderMobilePerformanceMode:v1';
   const HIRE_COSTS = [25, 50, 88, 138];
   const MAX_STANDARD_HEROES_ON_BOARD = 5;
   const UPGRADE_COST_MULTIPLIER = 3.3062;
@@ -1248,6 +1249,7 @@ const BIG_ASS_SWORD_IMAGE_PATH = 'assets/big_ass_sword.png';
     mobileFuncBountyBtn: document.getElementById('mobileFuncBountyBtn'),
     mobileFuncQuestsBtn: document.getElementById('mobileFuncQuestsBtn'),
     mobileFuncKnownRelicsBtn: document.getElementById('mobileFuncKnownRelicsBtn'),
+    mobileFuncPerformanceBtn: document.getElementById('mobileFuncPerformanceBtn'),
     mobileFuncStretchMenuBtn: document.getElementById('mobileFuncStretchMenuBtn'),
     mobileFuncHeroesBtn: document.getElementById('mobileFuncHeroesBtn'),
     mobileFuncStartBtn: document.getElementById('mobileFuncStartBtn'),
@@ -1417,6 +1419,7 @@ const BIG_ASS_SWORD_IMAGE_PATH = 'assets/big_ass_sword.png';
     virtualNow: 0,
     timeScale: 2,
     mobileMode: true,
+    performanceMode: true,
     paused: false,
     nextEnemyId: 1,
     nextTowerId: 1,
@@ -12842,6 +12845,41 @@ function canSubmitRewardClaims() {
 
 
 
+
+  function getStoredMobilePerformanceMode() {
+    try {
+      const raw = localStorage.getItem(MOBILE_PERFORMANCE_MODE_STORAGE_KEY);
+      if (raw === '0') return false;
+      if (raw === '1') return true;
+    } catch (_error) {}
+    return true;
+  }
+
+  function isPerformanceModeEnabled() {
+    return !!(game && game.performanceMode);
+  }
+
+  function saveMobilePerformanceMode(enabled) {
+    try { localStorage.setItem(MOBILE_PERFORMANCE_MODE_STORAGE_KEY, enabled ? '1' : '0'); } catch (_error) {}
+  }
+
+  function applyMobilePerformanceMode(enabled, options = {}) {
+    const nextEnabled = !!enabled;
+    game.performanceMode = nextEnabled;
+    document.body?.classList.toggle('mobile-performance-mode', nextEnabled);
+    if (els.mobileFuncPerformanceBtn) {
+      els.mobileFuncPerformanceBtn.textContent = `Performance Mode ${nextEnabled ? 'ON' : 'OFF'}`;
+      els.mobileFuncPerformanceBtn.classList.toggle('is-active', nextEnabled);
+    }
+    if (options.save) saveMobilePerformanceMode(nextEnabled);
+    if (nextEnabled) {
+      game.projectileEffects = [];
+      game.explosionEffects = [];
+      game.attackLines = [];
+      game.groundBurnEffects = [];
+    }
+  }
+
   const MOBILE_TILE_CONTROL_STORAGE_KEY = 'dfkDefenderMobileTileStretch:v1';
 
   let mobileTileStretchDraftSettings = null;
@@ -19933,6 +19971,7 @@ function canSubmitRewardClaims() {
 
   function createAttackLine(sourceTower, enemy, colorKey, variant = '') {
     if (!sourceTower || !enemy) return;
+    if (isPerformanceModeEnabled()) return;
     game.attackLines.push({
       sourceTowerId: sourceTower.id,
       enemyId: enemy.id,
@@ -19945,6 +19984,7 @@ function canSubmitRewardClaims() {
 
   function createProjectileEffect(effect) {
     if (!effect || !game) return;
+    if (isPerformanceModeEnabled()) return;
     if (!game.projectileEffects) game.projectileEffects = [];
     const startedAt = Number.isFinite(Number(effect.startedAt)) ? Number(effect.startedAt) : now();
     const durationMs = effect.durationMs || ARCHER_PROJECTILE_ANIMATION_MS;
@@ -20262,6 +20302,7 @@ function canSubmitRewardClaims() {
 
   function createTileFlashArea(tiles, colorKey) {
     if (!tiles) return;
+    if (isPerformanceModeEnabled()) return;
     for (const t of tiles) {
       if (t && typeof t.x === 'number' && typeof t.y === 'number') createHitFlash(t.x, t.y, colorKey || 'default', '');
     }
@@ -20269,6 +20310,7 @@ function canSubmitRewardClaims() {
 
   function createExplosionEffect(x, y, colorKey = 'warrior', radiusTiles = EXPLODING_STATUE_RADIUS, durationMs = EXPLODING_STATUE_ANIMATION_MS, imagePath = RED_FIRE_GIF_PATH, kind = 'statue-red-fire', effectTiles = null, opts = {}) {
     if (!inBounds(x, y)) return;
+    if (isPerformanceModeEnabled()) return;
     if (!game.explosionEffects) game.explosionEffects = [];
     const startedAt = Number.isFinite(Number(opts.startedAt)) ? Number(opts.startedAt) : now();
     game.explosionEffects.push({
@@ -20400,6 +20442,12 @@ function canSubmitRewardClaims() {
     els.enemyLayer.style.width = `${layerWidth}px`;
     els.enemyLayer.style.height = `${layerHeight}px`;
     const current = now();
+    if (isPerformanceModeEnabled()) {
+      game.attackLines = [];
+      game.groundBurnEffects = [];
+      game.projectileEffects = [];
+      game.explosionEffects = [];
+    }
     game.attackLines = game.attackLines.filter(line => line.until > current);
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('class', 'attack-line-layer');
@@ -22424,6 +22472,11 @@ function canSubmitRewardClaims() {
   els.mobileFuncBountyBtn?.addEventListener('click', () => openBountyModal());
   els.mobileFuncQuestsBtn?.addEventListener('click', () => { game.questBoardView = 'quests'; openQuestsModal(); });
   els.mobileFuncKnownRelicsBtn?.addEventListener('click', () => els.knownRelicsBtn?.click());
+  els.mobileFuncPerformanceBtn?.addEventListener('click', () => {
+    applyMobilePerformanceMode(!game.performanceMode, { save: true });
+    showBanner(game.performanceMode ? 'Performance Mode on: lighter visuals for smoother mobile play.' : 'Performance Mode off: full visuals restored.', 1800);
+  });
+
   els.mobileFuncStretchMenuBtn?.addEventListener('click', () => {
     closeMobileMenus();
     showMobileTileStretchControls();
